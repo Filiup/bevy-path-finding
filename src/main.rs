@@ -11,7 +11,7 @@ use rand::prelude::*;
 pub const WINDOW_WIDTH: f32 = 800.0;
 pub const WINDOW_HEIGHT: f32 = 600.0;
 
-pub const BLOCK_SIZE: f32 = 50.0;
+pub const BLOCK_SIZE: f32 = 40.0;
 pub const WALL_HEIGHT: f32 = 2.0;
 
 #[derive(Component, Debug)]
@@ -283,7 +283,7 @@ pub fn generate_maze(
                 current_childrens
                     .into_iter()
                     .fold(HashMap::new(), |mut acc, &entity| {
-                        let wall = walls_query.get(entity).unwrap().clone();
+                        let wall = walls_query.get(entity).unwrap();
                         acc.insert(wall.direction, entity);
                         acc
                     });
@@ -292,7 +292,7 @@ pub fn generate_maze(
                 neighbor_childrens
                     .into_iter()
                     .fold(HashMap::new(), |mut acc, &entity| {
-                        let wall = walls_query.get(entity).unwrap().clone();
+                        let wall = walls_query.get(entity).unwrap();
                         acc.insert(wall.direction, entity);
                         acc
                     });
