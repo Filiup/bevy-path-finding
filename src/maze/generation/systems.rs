@@ -3,11 +3,12 @@ use bevy::prelude::*;
 use crate::maze::window::{WINDOW_HEIGHT, WINDOW_WIDTH};
 
 use super::{
-    components::{Direction, MazeCell, MazeWall},
+    components::{Direction, MazeCell, MazeWall, VisitedCell},
+    resources::{CellGrid, MazeCellEntityStack},
     BLOCK_SIZE, WALL_HEIGHT,
 };
 
-pub fn spawn_maze_cells(mut commands: Commands) {
+pub fn spawn_maze_cells(mut commands: Commands, mut maze_grid: ResMut<CellGrid>) {
     let half_block_size = BLOCK_SIZE / 2.0;
     let half_wall_height = WALL_HEIGHT / 2.0;
 
@@ -19,7 +20,7 @@ pub fn spawn_maze_cells(mut commands: Commands) {
             let x_position = (col as f32) * BLOCK_SIZE + half_block_size;
             let y_position = (row as f32) * BLOCK_SIZE + half_block_size;
 
-            commands
+            let entity = commands
                 .spawn((
                     SpriteBundle {
                         transform: Transform::from_xyz(x_position, y_position, 0.0),
@@ -31,11 +32,7 @@ pub fn spawn_maze_cells(mut commands: Commands) {
                         },
                         ..default()
                     },
-                    MazeCell {
-                        visited: false,
-                        row,
-                        col,
-                    },
+                    MazeCell { row, col },
                 ))
                 .with_children(|parent| {
                     parent.spawn((
@@ -116,7 +113,21 @@ pub fn spawn_maze_cells(mut commands: Commands) {
                             direction: Direction::Left,
                         },
                     ));
-                });
+                })
+                .id();
+
+            maze_grid.add(row, col, entity);
         }
     }
+}
+
+pub fn stack_add_first_mazecell(
+    mut commands: Commands,
+    mut entity_stack: ResMut<MazeCellEntityStack>,
+    entity_query: Query<Entity, With<MazeCell>>,
+) {
+    let entity = entity_query.into_iter().next().unwrap();
+    entity_stack.push(entity);
+
+    commands.entity(entity).insert(VisitedCell);
 }

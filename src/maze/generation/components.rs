@@ -2,8 +2,6 @@ use bevy::prelude::*;
 
 #[derive(Component, Debug)]
 pub struct MazeCell {
-    pub visited: bool,
-
     pub row: usize,
     pub col: usize,
 }
@@ -20,3 +18,6 @@ pub enum Direction {
 pub struct MazeWall {
     pub direction: Direction,
 }
+
+#[derive(Component)]
+pub struct VisitedCell;
