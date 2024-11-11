@@ -1,10 +1,21 @@
-pub(crate) mod systems;
-
-use bevy::{prelude::*, window::WindowResolution};
-use systems::spawn_camera;
+use bevy::prelude::*;
+use bevy::{window::PrimaryWindow, window::WindowResolution};
 
 pub const WINDOW_WIDTH: f32 = 800.0;
 pub const WINDOW_HEIGHT: f32 = 600.0;
+
+pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<PrimaryWindow>>) {
+    let primary_window = window_query.get_single().unwrap();
+
+    commands.spawn(Camera2dBundle {
+        transform: Transform::from_xyz(
+            primary_window.width() / 2.0,
+            primary_window.height() / 2.0,
+            0.0,
+        ),
+        ..default()
+    });
+}
 
 pub struct MazeWindowPlugin;
 
