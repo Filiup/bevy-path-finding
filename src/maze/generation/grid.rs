@@ -10,7 +10,7 @@ use bevy::{prelude::*, utils::HashMap};
 pub struct MazeCellGrid(HashMap<(usize, usize), Entity>);
 
 impl MazeCellGrid {
-    pub fn add(&mut self, row: usize, col: usize, entity: Entity) -> Option<Entity> {
+    fn add(&mut self, row: usize, col: usize, entity: Entity) -> Option<Entity> {
         self.0.insert((row, col), entity)
     }
 
@@ -19,7 +19,7 @@ impl MazeCellGrid {
     }
 }
 
-pub(crate) fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {
+pub fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {
     let half_block_size = BLOCK_SIZE / 2.0;
     let half_wall_height = WALL_HEIGHT / 2.0;
 

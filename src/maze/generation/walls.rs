@@ -17,7 +17,7 @@ pub struct MazeWall {
 }
 
 #[derive(Event)]
-pub struct DestroyWallsBetween {
+pub(crate) struct DestroyWallsBetween {
     pub current: Entity,
     pub neighbor: Entity,
 }

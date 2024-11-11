@@ -1,3 +1,8 @@
+mod cell;
+mod grid;
+mod stack;
+mod walls;
+
 use bevy::prelude::*;
 use cell::iterate_cells;
 use grid::{spawn_grid, MazeCellGrid};
@@ -6,11 +11,6 @@ use walls::{destroy_walls, DestroyWallsBetween};
 
 pub const BLOCK_SIZE: f32 = 40.0;
 pub const WALL_HEIGHT: f32 = 2.0;
-
-pub(crate) mod cell;
-pub(crate) mod grid;
-pub(crate) mod stack;
-pub(crate) mod walls;
 
 pub struct MazeGenerationPlugin;
 
