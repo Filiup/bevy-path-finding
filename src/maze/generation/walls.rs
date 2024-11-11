@@ -1,6 +1,5 @@
 use bevy::prelude::{Entity, Event};
 use bevy::{prelude::*, utils::HashMap};
-use std::convert::identity;
 
 use super::cell::MazeCell;
 
@@ -90,14 +89,14 @@ pub fn destroy_walls(
         let d_col = current_cell.col as i32 - neighbor_cell.col as i32;
         let d_row = current_cell.row as i32 - neighbor_cell.row as i32;
 
-        assert!(d_col >= -1 && d_col <= 1);
-        assert!(d_row >= -1 && d_row <= 1);
+        assert!((-1..=1).contains(&d_col));
+        assert!((-1..=1).contains(&d_row));
 
         let walls_to_destroy = get_walls_to_destroy(d_col, d_row, current_walls, neighbor_walls);
 
         walls_to_destroy
             .into_iter()
-            .filter_map(identity)
+            .flatten()
             .for_each(|entity| commands.entity(entity).despawn());
     }
 }

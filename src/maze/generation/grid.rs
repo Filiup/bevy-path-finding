@@ -38,7 +38,7 @@ pub(crate) fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellG
 
                         sprite: Sprite {
                             color: Color::WHITE,
-                            custom_size: Some(Vec2::new(BLOCK_SIZE as f32, BLOCK_SIZE as f32)),
+                            custom_size: Some(Vec2::new(BLOCK_SIZE, BLOCK_SIZE)),
                             ..default()
                         },
                         ..default()

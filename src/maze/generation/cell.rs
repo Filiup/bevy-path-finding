@@ -1,7 +1,6 @@
 use super::{grid::MazeCellGrid, stack::EntityStack, walls::DestroyWallsBetween};
 use bevy::prelude::*;
 use rand::prelude::*;
-use std::convert::identity;
 
 #[derive(Component, Debug)]
 pub struct MazeCell {
@@ -21,7 +20,7 @@ fn find_neighbors(maze_cell: &MazeCell, cell_grid: &MazeCellGrid) -> impl Iterat
 
     [top_neighbor, bottom_neighbor, left_neighbor, right_neighbor]
         .into_iter()
-        .filter_map(identity)
+        .flatten()
 }
 
 pub fn iterate_cells(
