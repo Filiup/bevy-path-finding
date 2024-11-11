@@ -40,12 +40,11 @@ pub fn iterate_cells(
             .filter(|&entity| {
                 let (neighbor_cell, _) = maze_cells_query.get(entity).unwrap();
                 !neighbor_cell.visited
-            })
-            .collect::<Vec<_>>();
+            });
 
         let choosen_neighbor = neighbors.choose(&mut rand::thread_rng());
 
-        if let Some(&neighbor_entity) = choosen_neighbor {
+        if let Some(neighbor_entity) = choosen_neighbor {
             cell_stack.push(current_entity);
             {
                 let (mut neighbor_cell, _) = maze_cells_query.get_mut(neighbor_entity).unwrap();
