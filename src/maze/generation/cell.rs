@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use super::{grid::MazeCellGrid, stack::EntityStack, walls::DestroyWallsBetween};
 use bevy::prelude::*;
 use rand::prelude::*;
@@ -7,6 +9,68 @@ pub struct MazeCell {
     pub row: usize,
     pub col: usize,
     pub visited: bool,
+}
+
+#[derive(Resource)]
+pub struct CellIterationTimer {
+    pub timer: Timer,
+}
+
+#[derive(Event)]
+pub struct ChangeCellColor {
+    entity: Entity,
+    color: Color,
+}
+
+#[derive(Event)]
+pub struct ResetCellColor;
+
+#[derive(Resource, Default)]
+pub struct ChangedColorStack(Vec<Entity>);
+
+impl ChangedColorStack {
+    pub fn push(&mut self, entity: Entity) {
+        self.0.push(entity);
+    }
+
+    pub fn pop(&mut self) -> Option<Entity> {
+        self.0.pop()
+    }
+}
+
+impl Default for CellIterationTimer {
+    fn default() -> Self {
+        CellIterationTimer {
+            timer: Timer::new(Duration::from_millis(400), TimerMode::Repeating),
+        }
+    }
+}
+
+pub fn reset_cell_color(
+    mut changed_color_stack: ResMut<ChangedColorStack>,
+    mut reset_cell_color_reader: EventReader<ResetCellColor>,
+    mut sprite_query: Query<&mut Sprite, With<MazeCell>>,
+) {
+    for _ in reset_cell_color_reader.read() {
+        while let Some(entity) = changed_color_stack.pop() {
+            let mut sprite = sprite_query.get_mut(entity).unwrap();
+
+            sprite.color = Color::WHITE;
+        }
+    }
+}
+
+pub fn change_cell_color(
+    mut change_color_reader: EventReader<ChangeCellColor>,
+    mut sprite_query: Query<&mut Sprite, With<MazeCell>>,
+    mut changed_color_stack: ResMut<ChangedColorStack>,
+) {
+    for ChangeCellColor { color, entity } in change_color_reader.read() {
+        let mut sprite = sprite_query.get_mut(*entity).unwrap();
+        sprite.color = *color;
+
+        changed_color_stack.push(*entity);
+    }
 }
 
 fn find_neighbors(maze_cell: &MazeCell, cell_grid: &MazeCellGrid) -> impl Iterator<Item = Entity> {
@@ -23,31 +87,51 @@ fn find_neighbors(maze_cell: &MazeCell, cell_grid: &MazeCellGrid) -> impl Iterat
         .flatten()
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn iterate_cells(
     mut cell_stack: ResMut<EntityStack>,
-    cell_grid: Res<MazeCellGrid>,
+    mut cell_iteration_timer: ResMut<CellIterationTimer>,
     mut destroy_walls_writer: EventWriter<DestroyWallsBetween>,
-    mut maze_cells_query: Query<(&mut MazeCell, &mut Sprite)>,
-) {
-    if let Some(current_entity) = cell_stack.pop() {
-        let (mut current_cell, mut current_sprite) =
-            maze_cells_query.get_mut(current_entity).unwrap();
+    mut change_color_writer: EventWriter<ChangeCellColor>,
+    mut reset_cell_color_writer: EventWriter<ResetCellColor>,
+    cell_grid: Res<MazeCellGrid>,
+    time: Res<Time>,
 
-        current_sprite.color = Color::BLACK;
+    mut maze_cells_query: Query<&mut MazeCell>,
+) {
+    cell_iteration_timer.timer.tick(time.delta());
+    if !cell_iteration_timer.timer.finished() {
+        return;
+    }
+
+    if let Some(current_entity) = cell_stack.pop() {
+        let mut current_cell = maze_cells_query.get_mut(current_entity).unwrap();
+
         current_cell.visited = true;
+        change_color_writer.send(ChangeCellColor {
+            color: Color::BLACK,
+            entity: current_entity,
+        });
 
         let neighbors = find_neighbors(&current_cell, &cell_grid)
             .filter(|&entity| {
-                let (neighbor_cell, _) = maze_cells_query.get(entity).unwrap();
+                let neighbor_cell = maze_cells_query.get(entity).unwrap();
                 !neighbor_cell.visited
+            })
+            .collect::<Vec<_>>();
+
+        for &neighbor_entity in neighbors.iter() {
+            change_color_writer.send(ChangeCellColor {
+                color: Color::srgb(128.0 / 255.0, 128.0 / 255.0, 128.0 / 255.0),
+                entity: neighbor_entity,
             });
+        }
 
         let choosen_neighbor = neighbors.choose(&mut rand::thread_rng());
-
-        if let Some(neighbor_entity) = choosen_neighbor {
+        if let Some(&neighbor_entity) = choosen_neighbor {
             cell_stack.push(current_entity);
             {
-                let (mut neighbor_cell, _) = maze_cells_query.get_mut(neighbor_entity).unwrap();
+                let mut neighbor_cell = maze_cells_query.get_mut(neighbor_entity).unwrap();
                 neighbor_cell.visited = true;
             }
 
@@ -58,4 +142,5 @@ pub fn iterate_cells(
             cell_stack.push(neighbor_entity);
         }
     }
+    reset_cell_color_writer.send(ResetCellColor);
 }
