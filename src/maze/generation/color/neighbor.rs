@@ -1,10 +1,10 @@
-use super::cell::MazeCell;
+use crate::maze::generation::cell::MazeCell;
 use bevy::prelude::*;
 
 #[derive(Resource, Default)]
-pub struct ChangedColorStack(Vec<Entity>);
+pub struct NeighborColorStack(Vec<Entity>);
 
-impl ChangedColorStack {
+impl NeighborColorStack {
     pub fn push(&mut self, entity: Entity) {
         self.0.push(entity);
     }
@@ -15,30 +15,27 @@ impl ChangedColorStack {
 }
 
 #[derive(Event)]
-pub struct ChangeCellColor {
-    pub entity: Entity,
-    pub color: Color,
-}
+pub struct ChangeNeighborColor(pub Entity);
 
 #[derive(Event)]
-pub struct ResetCellColor;
+pub struct ResetNeighborsColor;
 
-pub fn change_cell_color(
-    mut change_color_reader: EventReader<ChangeCellColor>,
+pub fn change_neighbor_color(
+    mut change_color_reader: EventReader<ChangeNeighborColor>,
     mut sprite_query: Query<&mut Sprite, With<MazeCell>>,
-    mut changed_color_stack: ResMut<ChangedColorStack>,
+    mut changed_color_stack: ResMut<NeighborColorStack>,
 ) {
-    for ChangeCellColor { color, entity } in change_color_reader.read() {
+    for ChangeNeighborColor(entity) in change_color_reader.read() {
         let mut sprite = sprite_query.get_mut(*entity).unwrap();
-        sprite.color = *color;
+        sprite.color = Color::srgb(128.0 / 255.0, 128.0 / 255.0, 128.0 / 255.0);
 
         changed_color_stack.push(*entity);
     }
 }
 
-pub fn reset_cell_color(
-    mut changed_color_stack: ResMut<ChangedColorStack>,
-    mut reset_cell_color_reader: EventReader<ResetCellColor>,
+pub fn reset_neighbor_color(
+    mut changed_color_stack: ResMut<NeighborColorStack>,
+    mut reset_cell_color_reader: EventReader<ResetNeighborsColor>,
     mut sprite_query: Query<&mut Sprite, With<MazeCell>>,
 ) {
     for _ in reset_cell_color_reader.read() {
