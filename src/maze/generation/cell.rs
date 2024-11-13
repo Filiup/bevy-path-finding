@@ -1,6 +1,11 @@
 use std::time::Duration;
 
-use super::{grid::MazeCellGrid, stack::EntityStack, walls::DestroyWallsBetween};
+use super::{
+    color::{ChangeCellColor, ResetCellColor},
+    grid::MazeCellGrid,
+    stack::EntityStack,
+    walls::DestroyWallsBetween,
+};
 use bevy::prelude::*;
 use rand::prelude::*;
 
@@ -16,60 +21,11 @@ pub struct CellIterationTimer {
     pub timer: Timer,
 }
 
-#[derive(Event)]
-pub struct ChangeCellColor {
-    entity: Entity,
-    color: Color,
-}
-
-#[derive(Event)]
-pub struct ResetCellColor;
-
-#[derive(Resource, Default)]
-pub struct ChangedColorStack(Vec<Entity>);
-
-impl ChangedColorStack {
-    pub fn push(&mut self, entity: Entity) {
-        self.0.push(entity);
-    }
-
-    pub fn pop(&mut self) -> Option<Entity> {
-        self.0.pop()
-    }
-}
-
 impl Default for CellIterationTimer {
     fn default() -> Self {
         CellIterationTimer {
             timer: Timer::new(Duration::from_millis(400), TimerMode::Repeating),
         }
-    }
-}
-
-pub fn reset_cell_color(
-    mut changed_color_stack: ResMut<ChangedColorStack>,
-    mut reset_cell_color_reader: EventReader<ResetCellColor>,
-    mut sprite_query: Query<&mut Sprite, With<MazeCell>>,
-) {
-    for _ in reset_cell_color_reader.read() {
-        while let Some(entity) = changed_color_stack.pop() {
-            let mut sprite = sprite_query.get_mut(entity).unwrap();
-
-            sprite.color = Color::WHITE;
-        }
-    }
-}
-
-pub fn change_cell_color(
-    mut change_color_reader: EventReader<ChangeCellColor>,
-    mut sprite_query: Query<&mut Sprite, With<MazeCell>>,
-    mut changed_color_stack: ResMut<ChangedColorStack>,
-) {
-    for ChangeCellColor { color, entity } in change_color_reader.read() {
-        let mut sprite = sprite_query.get_mut(*entity).unwrap();
-        sprite.color = *color;
-
-        changed_color_stack.push(*entity);
     }
 }
 

@@ -1,12 +1,14 @@
 mod cell;
+mod color;
 mod grid;
 mod stack;
 mod walls;
 
 use bevy::prelude::*;
-use cell::{
-    change_cell_color, iterate_cells, reset_cell_color, CellIterationTimer, ChangeCellColor,
-    ChangedColorStack, ResetCellColor,
+use cell::{iterate_cells, CellIterationTimer};
+
+use color::{
+    change_cell_color, reset_cell_color, ChangeCellColor, ChangedColorStack, ResetCellColor,
 };
 use grid::{spawn_grid, MazeCellGrid};
 use stack::{stack_add_first_mazecell, EntityStack};
