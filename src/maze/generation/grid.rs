@@ -1,7 +1,7 @@
 use super::{
     cell::MazeCell,
     walls::{Direction, MazeWall},
-    BLOCK_SIZE, WALL_HEIGHT,
+    BLOCK_SIZE, CELL_COLOR, WALL_COLOR, WALL_HEIGHT,
 };
 use crate::maze::window::{WINDOW_HEIGHT, WINDOW_WIDTH};
 use bevy::{prelude::*, utils::HashMap};
@@ -37,7 +37,7 @@ pub fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {
                         transform: Transform::from_xyz(x_position, y_position, 0.0),
 
                         sprite: Sprite {
-                            color: Color::WHITE,
+                            color: CELL_COLOR,
                             custom_size: Some(Vec2::new(BLOCK_SIZE, BLOCK_SIZE)),
                             ..default()
                         },
@@ -58,7 +58,7 @@ pub fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {
                                 0.0,
                             ),
                             sprite: Sprite {
-                                color: Color::srgb(255.0, 0.0, 0.0),
+                                color: WALL_COLOR,
                                 custom_size: Some(Vec2::new(BLOCK_SIZE, WALL_HEIGHT)),
                                 ..default()
                             },
@@ -78,7 +78,7 @@ pub fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {
                                 0.0,
                             ),
                             sprite: Sprite {
-                                color: Color::srgb(255.0, 0.0, 0.0),
+                                color: WALL_COLOR,
                                 custom_size: Some(Vec2::new(BLOCK_SIZE, WALL_HEIGHT)),
                                 ..default()
                             },
@@ -98,7 +98,7 @@ pub fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {
                                 0.0,
                             ),
                             sprite: Sprite {
-                                color: Color::srgb(255.0, 0.0, 0.0),
+                                color: WALL_COLOR,
                                 custom_size: Some(Vec2::new(WALL_HEIGHT, BLOCK_SIZE)),
                                 ..default()
                             },
@@ -118,7 +118,7 @@ pub fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {
                                 0.0,
                             ),
                             sprite: Sprite {
-                                color: Color::srgb(255.0, 0.0, 0.0),
+                                color: WALL_COLOR,
                                 custom_size: Some(Vec2::new(WALL_HEIGHT, BLOCK_SIZE)),
                                 ..default()
                             },

@@ -1,10 +1,7 @@
 use std::time::Duration;
 
 use super::{
-    color::{
-        current::ChangeCurrentColor,
-        neighbor::{ChangeNeighborColor, ResetNeighborsColor},
-    },
+    color::{ChangeStackColor, ResetStackColor},
     grid::MazeCellGrid,
     stack::EntityStack,
     walls::DestroyWallsBetween,
@@ -54,9 +51,8 @@ pub fn iterate_cells(
     mut cell_iteration_timer: ResMut<CellIterationTimer>,
 
     mut destroy_walls_writer: EventWriter<DestroyWallsBetween>,
-    mut neighbor_color_writer: EventWriter<ChangeNeighborColor>,
-    mut reset_neighbor_color_writer: EventWriter<ResetNeighborsColor>,
-    mut current_color_writer: EventWriter<ChangeCurrentColor>,
+    mut change_color_writer: EventWriter<ChangeStackColor>,
+    mut reset_color_writer: EventWriter<ResetStackColor>,
 
     mut maze_cells_query: Query<&mut MazeCell>,
 ) {
@@ -66,10 +62,12 @@ pub fn iterate_cells(
     }
 
     if let Some(current_entity) = cell_stack.pop() {
+        reset_color_writer.send(ResetStackColor {
+            entity: current_entity,
+        });
         let mut current_cell = maze_cells_query.get_mut(current_entity).unwrap();
 
         current_cell.visited = true;
-        current_color_writer.send(ChangeCurrentColor(current_entity, Color::WHITE));
 
         let neighbors = find_neighbors(&current_cell, &cell_grid)
             .filter(|&entity| {
@@ -78,14 +76,13 @@ pub fn iterate_cells(
             })
             .collect::<Vec<_>>();
 
-        for &neighbor_entity in neighbors.iter() {
-            neighbor_color_writer.send(ChangeNeighborColor(neighbor_entity));
-        }
-
         let choosen_neighbor = neighbors.choose(&mut rand::thread_rng());
         if let Some(&neighbor_entity) = choosen_neighbor {
             cell_stack.push(current_entity);
-            current_color_writer.send(ChangeCurrentColor(current_entity, Color::BLACK));
+            change_color_writer.send(ChangeStackColor {
+                cell: current_entity,
+                neighbor_cells: neighbors.clone(),
+            });
 
             {
                 let mut neighbor_cell = maze_cells_query.get_mut(neighbor_entity).unwrap();
@@ -97,8 +94,6 @@ pub fn iterate_cells(
                 neighbor: neighbor_entity,
             });
             cell_stack.push(neighbor_entity);
-            current_color_writer.send(ChangeCurrentColor(neighbor_entity, Color::BLACK));
         }
     }
-    reset_neighbor_color_writer.send(ResetNeighborsColor);
 }

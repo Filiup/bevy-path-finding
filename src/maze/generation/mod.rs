@@ -7,20 +7,20 @@ mod walls;
 use bevy::prelude::*;
 use cell::{iterate_cells, CellIterationTimer};
 
-use color::{
-    current::{change_current_color, ChangeCurrentColor},
-    neighbor::{
-        change_neighbor_color, reset_neighbor_color, ChangeNeighborColor, NeighborColorStack,
-        ResetNeighborsColor,
-    },
-};
-
+use color::{change_stack_color, reset_stack_color, ChangeStackColor, ResetStackColor};
 use grid::{spawn_grid, MazeCellGrid};
 use stack::{stack_add_first_mazecell, EntityStack};
 use walls::{destroy_walls, DestroyWallsBetween};
 
 pub const BLOCK_SIZE: f32 = 40.0;
 pub const WALL_HEIGHT: f32 = 2.0;
+
+pub const CELL_COLOR: Color = Color::WHITE;
+pub const WALL_COLOR: Color = Color::BLACK;
+
+pub const CELL_STACK_COLOR: Color = Color::srgb(173.0 / 255.0, 216.0 / 255.0, 230.0 / 255.0);
+pub const NEIGHBOR_COLOR: Color = Color::srgb(128.0 / 255.0, 128.0 / 255.0, 128.0 / 255.0);
+
 
 pub struct MazeGenerationPlugin;
 
@@ -29,11 +29,9 @@ impl Plugin for MazeGenerationPlugin {
         app.init_resource::<MazeCellGrid>()
             .init_resource::<EntityStack>()
             .init_resource::<CellIterationTimer>()
-            .init_resource::<NeighborColorStack>()
             .add_event::<DestroyWallsBetween>()
-            .add_event::<ResetNeighborsColor>()
-            .add_event::<ChangeNeighborColor>()
-            .add_event::<ChangeCurrentColor>()
+            .add_event::<ChangeStackColor>()
+            .add_event::<ResetStackColor>()
             .add_systems(
                 Startup,
                 (spawn_grid, stack_add_first_mazecell.after(spawn_grid)),
@@ -43,9 +41,8 @@ impl Plugin for MazeGenerationPlugin {
                 (
                     iterate_cells,
                     destroy_walls,
-                    change_neighbor_color,
-                    reset_neighbor_color.after(iterate_cells),
-                    change_current_color,
+                    change_stack_color,
+                    reset_stack_color.after(iterate_cells),
                 ),
             );
     }
