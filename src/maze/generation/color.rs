@@ -1,4 +1,4 @@
-use super::{cell::MazeCell, CELL_STACK_COLOR, NEIGHBOR_COLOR};
+use super::{cell::MazeCell, CELL_COLOR, CELL_STACK_COLOR, NEIGHBOR_COLOR};
 use bevy::prelude::*;
 
 #[derive(Event)]
@@ -37,6 +37,6 @@ pub fn reset_stack_color(
 ) {
     for ResetStackColor { entity } in reset_color_reader.read() {
         let mut current_sprite = sprite_query.get_mut(*entity).unwrap();
-        current_sprite.color = Color::WHITE;
+        current_sprite.color = CELL_COLOR;
     }
 }
