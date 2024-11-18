@@ -10,7 +10,7 @@ use color::{change_stack_color, reset_stack_color, ChangeStackColor, ResetStackC
 use stack::{stack_add_first_mazecell, EntityStack};
 use walls::{destroy_walls, DestroyWallsBetween};
 
-use super::{grid::spawn_grid, states::MazeState};
+use super::states::MazeState;
 
 pub const CELL_STACK_COLOR: Color = Color::srgb(173.0 / 255.0, 216.0 / 255.0, 230.0 / 255.0);
 pub const NEIGHBOR_COLOR: Color = Color::srgb(128.0 / 255.0, 128.0 / 255.0, 128.0 / 255.0);
@@ -24,7 +24,7 @@ impl Plugin for MazeGenerationPlugin {
             .add_event::<DestroyWallsBetween>()
             .add_event::<ChangeStackColor>()
             .add_event::<ResetStackColor>()
-            .add_systems(Startup, stack_add_first_mazecell.after(spawn_grid))
+            .add_systems(Startup, stack_add_first_mazecell)
             .add_systems(
                 Update,
                 (

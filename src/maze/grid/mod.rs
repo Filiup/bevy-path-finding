@@ -1,7 +1,7 @@
 mod systems;
 
 use bevy::{prelude::*, utils::HashMap};
-pub use systems::spawn_grid;
+use systems::spawn_grid;
 
 pub const BLOCK_SIZE: f32 = 40.0;
 pub const WALL_HEIGHT: f32 = 2.0;
@@ -27,6 +27,6 @@ pub struct MazeGridPlugin;
 impl Plugin for MazeGridPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<MazeCellGrid>()
-            .add_systems(Startup, spawn_grid);
+            .add_systems(PreStartup, spawn_grid);
     }
 }
