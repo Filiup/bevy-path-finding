@@ -1,10 +1,12 @@
+use super::{MazeCellGrid, BLOCK_SIZE, CELL_COLOR, WALL_COLOR, WALL_HEIGHT};
 use crate::maze::{
-    generation::{WallDirection, MazeCell, MazeWall, BLOCK_SIZE, WALL_HEIGHT},
+    common::{
+        cell::MazeCell,
+        wall::{MazeWall, WallDirection},
+    },
     window::{GRID_WINDOW_HEIGHT, GRID_WINDOW_WIDTH},
 };
 use bevy::prelude::*;
-
-use super::{MazeCellGrid, CELL_COLOR, WALL_COLOR};
 
 pub fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {
     let half_block_size = BLOCK_SIZE / 2.0;

@@ -1,20 +1,7 @@
+use crate::maze::common::cell::MazeCell;
+use crate::maze::common::wall::{MazeWall, WallDirection};
 use bevy::prelude::{Entity, Event};
 use bevy::{prelude::*, utils::HashMap};
-
-use super::cell::MazeCell;
-
-#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)]
-pub enum WallDirection {
-    Top,
-    Bottom,
-    Left,
-    Right,
-}
-
-#[derive(Component, Debug, Clone, Copy)]
-pub struct MazeWall {
-    pub direction: WallDirection,
-}
 
 #[derive(Event)]
 pub(crate) struct DestroyWallsBetween {

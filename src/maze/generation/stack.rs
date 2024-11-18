@@ -1,4 +1,4 @@
-use super::cell::MazeCell;
+use crate::maze::common::cell::MazeCell;
 use bevy::prelude::*;
 
 #[derive(Resource, Default)]

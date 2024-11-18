@@ -1,5 +1,5 @@
+use crate::maze::{common::cell::MazeCell, grid::MazeCellGrid};
 use std::time::Duration;
-use crate::maze::grid::MazeCellGrid;
 
 use super::{
     color::{ChangeStackColor, ResetStackColor},
@@ -8,13 +8,6 @@ use super::{
 };
 use bevy::prelude::*;
 use rand::prelude::*;
-
-#[derive(Component, Debug)]
-pub struct MazeCell {
-    pub row: usize,
-    pub col: usize,
-    pub visited: bool,
-}
 
 #[derive(Resource)]
 pub struct CellIterationTimer {
