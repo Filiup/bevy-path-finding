@@ -1,9 +1,10 @@
 mod buttons;
+mod interactions;
 
-use bevy:: prelude::*;
-use buttons::spawn_action_button;
 use super::window::{UI_WINDOW_HEIGHT, UI_WINDOW_WIDTH};
-
+use bevy::prelude::*;
+use buttons::{spawn_action_button, GenerateMazeButton, LoadMazeButton, SaveMazeButton};
+use interactions::button_generate_clicked;
 
 pub fn generate_ui(mut commands: Commands) {
     commands
@@ -24,13 +25,13 @@ pub fn generate_ui(mut commands: Commands) {
             ..default()
         })
         .with_children(|builder| {
-            spawn_action_button(builder, "Generate maze");
+            spawn_action_button(builder, GenerateMazeButton, "Generate maze");
         })
         .with_children(|builder| {
-            spawn_action_button(builder, "Save maze");
+            spawn_action_button(builder, SaveMazeButton, "Save maze");
         })
         .with_children(|builder| {
-            spawn_action_button(builder, "Load maze");
+            spawn_action_button(builder, LoadMazeButton, "Load maze");
         });
 }
 
@@ -38,6 +39,7 @@ pub struct UiPlugin;
 
 impl Plugin for UiPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, generate_ui);
+        app.add_systems(Startup, generate_ui)
+            .add_systems(Update, button_generate_clicked);
     }
 }
