@@ -3,7 +3,7 @@ use super::{
     walls::{Direction, MazeWall},
     BLOCK_SIZE, CELL_COLOR, WALL_COLOR, WALL_HEIGHT,
 };
-use crate::maze::window::{WINDOW_HEIGHT, WINDOW_WIDTH};
+use crate::maze::window::{GRID_WINDOW_HEIGHT, GRID_WINDOW_WIDTH};
 use bevy::{prelude::*, utils::HashMap};
 
 #[derive(Resource, Default)]
@@ -23,8 +23,8 @@ pub fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {
     let half_block_size = BLOCK_SIZE / 2.0;
     let half_wall_height = WALL_HEIGHT / 2.0;
 
-    let rows = (WINDOW_HEIGHT / BLOCK_SIZE) as usize;
-    let cols = (WINDOW_WIDTH / BLOCK_SIZE) as usize;
+    let rows = (GRID_WINDOW_HEIGHT / BLOCK_SIZE) as usize;
+    let cols = (GRID_WINDOW_WIDTH / BLOCK_SIZE) as usize;
 
     for row in 0..rows {
         for col in 0..cols {
