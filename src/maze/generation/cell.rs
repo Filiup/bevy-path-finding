@@ -1,8 +1,8 @@
 use std::time::Duration;
+use crate::maze::grid::MazeCellGrid;
 
 use super::{
     color::{ChangeStackColor, ResetStackColor},
-    grid::MazeCellGrid,
     stack::EntityStack,
     walls::DestroyWallsBetween,
 };

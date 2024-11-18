@@ -1,4 +1,6 @@
-use super::{cell::MazeCell, CELL_COLOR, CELL_STACK_COLOR, NEIGHBOR_COLOR};
+use crate::maze::grid::CELL_COLOR;
+
+use super::{cell::MazeCell, CELL_STACK_COLOR, NEIGHBOR_COLOR};
 use bevy::prelude::*;
 
 #[derive(Event)]

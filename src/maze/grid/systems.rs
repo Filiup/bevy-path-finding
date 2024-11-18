@@ -1,23 +1,10 @@
-use super::{
-    cell::MazeCell,
-    walls::{Direction, MazeWall},
-    BLOCK_SIZE, CELL_COLOR, WALL_COLOR, WALL_HEIGHT,
+use crate::maze::{
+    generation::{WallDirection, MazeCell, MazeWall, BLOCK_SIZE, WALL_HEIGHT},
+    window::{GRID_WINDOW_HEIGHT, GRID_WINDOW_WIDTH},
 };
-use crate::maze::window::{GRID_WINDOW_HEIGHT, GRID_WINDOW_WIDTH};
-use bevy::{prelude::*, utils::HashMap};
+use bevy::prelude::*;
 
-#[derive(Resource, Default)]
-pub struct MazeCellGrid(HashMap<(usize, usize), Entity>);
-
-impl MazeCellGrid {
-    fn add(&mut self, row: usize, col: usize, entity: Entity) -> Option<Entity> {
-        self.0.insert((row, col), entity)
-    }
-
-    pub fn get(&self, row: usize, col: usize) -> Option<Entity> {
-        self.0.get(&(row, col)).copied()
-    }
-}
+use super::{MazeCellGrid, CELL_COLOR, WALL_COLOR};
 
 pub fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {
     let half_block_size = BLOCK_SIZE / 2.0;
@@ -65,7 +52,7 @@ pub fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {
                             ..default()
                         },
                         MazeWall {
-                            direction: Direction::Top,
+                            direction: WallDirection::Top,
                         },
                     ));
                 })
@@ -85,7 +72,7 @@ pub fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {
                             ..default()
                         },
                         MazeWall {
-                            direction: Direction::Bottom,
+                            direction: WallDirection::Bottom,
                         },
                     ));
                 })
@@ -105,7 +92,7 @@ pub fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {
                             ..default()
                         },
                         MazeWall {
-                            direction: Direction::Right,
+                            direction: WallDirection::Right,
                         },
                     ));
                 })
@@ -125,7 +112,7 @@ pub fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {
                             ..default()
                         },
                         MazeWall {
-                            direction: Direction::Left,
+                            direction: WallDirection::Left,
                         },
                     ));
                 })

@@ -4,7 +4,7 @@ use bevy::{prelude::*, utils::HashMap};
 use super::cell::MazeCell;
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)]
-pub enum Direction {
+pub enum WallDirection {
     Top,
     Bottom,
     Left,
@@ -13,7 +13,7 @@ pub enum Direction {
 
 #[derive(Component, Debug, Clone, Copy)]
 pub struct MazeWall {
-    pub direction: Direction,
+    pub direction: WallDirection,
 }
 
 #[derive(Event)]
@@ -25,29 +25,29 @@ pub(crate) struct DestroyWallsBetween {
 fn get_walls_to_destroy(
     d_col: i32,
     d_row: i32,
-    current_walls: HashMap<Direction, Entity>,
-    neighbor_walls: HashMap<Direction, Entity>,
+    current_walls: HashMap<WallDirection, Entity>,
+    neighbor_walls: HashMap<WallDirection, Entity>,
 ) -> [Option<Entity>; 2] {
     let mut entities_destroy = [None; 2];
 
     if d_col == 1 {
-        entities_destroy[0] = current_walls.get(&Direction::Left).copied();
-        entities_destroy[1] = neighbor_walls.get(&Direction::Right).copied();
+        entities_destroy[0] = current_walls.get(&WallDirection::Left).copied();
+        entities_destroy[1] = neighbor_walls.get(&WallDirection::Right).copied();
     }
 
     if d_col == -1 {
-        entities_destroy[0] = current_walls.get(&Direction::Right).copied();
-        entities_destroy[1] = neighbor_walls.get(&Direction::Left).copied();
+        entities_destroy[0] = current_walls.get(&WallDirection::Right).copied();
+        entities_destroy[1] = neighbor_walls.get(&WallDirection::Left).copied();
     }
 
     if d_row == -1 {
-        entities_destroy[0] = current_walls.get(&Direction::Top).copied();
-        entities_destroy[1] = neighbor_walls.get(&Direction::Bottom).copied();
+        entities_destroy[0] = current_walls.get(&WallDirection::Top).copied();
+        entities_destroy[1] = neighbor_walls.get(&WallDirection::Bottom).copied();
     }
 
     if d_row == 1 {
-        entities_destroy[0] = current_walls.get(&Direction::Bottom).copied();
-        entities_destroy[1] = neighbor_walls.get(&Direction::Top).copied();
+        entities_destroy[0] = current_walls.get(&WallDirection::Bottom).copied();
+        entities_destroy[1] = neighbor_walls.get(&WallDirection::Top).copied();
     }
 
     entities_destroy
