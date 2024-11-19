@@ -1,5 +1,7 @@
 use bevy::{ecs::system::EntityCommands, prelude::*};
 
+use super::BUTTON_COLOR;
+
 #[derive(Component)]
 pub struct GenerateMazeButton;
 
@@ -34,7 +36,7 @@ pub fn spawn_action_button<'a>(
                 align_items: AlignItems::Center,
                 ..default()
             },
-            background_color: Color::srgb(255.0, 0.0, 0.0).into(),
+            background_color: BUTTON_COLOR.into(),
             ..default()
         },
         component,

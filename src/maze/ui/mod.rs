@@ -1,13 +1,19 @@
-mod buttons;
+#[macro_use]
 mod interactions;
+mod buttons;
 
 use super::{
     states::MazeState,
     window::{UI_WINDOW_HEIGHT, UI_WINDOW_WIDTH},
 };
+
+pub const BUTTON_COLOR: Color = Color::srgb(128.0 / 255.0, 128.0 / 255.0, 128.0 / 255.0);
+pub const BUTTON_HOVER_COLOR: Color = Color::srgb(173.0 / 255.0, 216.0 / 255.0, 230.0 / 255.0);
+
+use bevy::color::Color;
 use bevy::prelude::*;
 use buttons::{spawn_action_button, GenerateMazeButton, LoadMazeButton, SaveMazeButton};
-use interactions::button_interaction_system;
+use interactions::{button_hover_change_color, button_state_system};
 
 pub fn generate_ui(mut commands: Commands) {
     commands
@@ -44,9 +50,12 @@ impl Plugin for UiPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, generate_ui).add_systems(
             Update,
-            button_interaction_system::<GenerateMazeButton, _>(
-                MazeState::Generation,
-                Interaction::Pressed,
+            (
+                button_state_system::<GenerateMazeButton, _>(
+                    MazeState::Generation,
+                    Interaction::Pressed,
+                ),
+                create_buttons_hover_system!(GenerateMazeButton, SaveMazeButton, LoadMazeButton),
             ),
         );
     }
