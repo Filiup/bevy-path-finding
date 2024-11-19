@@ -1,18 +1,23 @@
 use bevy::{
-    prelude::{Changed, NextState, Query, ResMut, With},
+    prelude::{Changed, Component, NextState, Query, ResMut, States, With},
+    state::state::FreelyMutableState,
     ui::Interaction,
 };
 
-use super::buttons::GenerateMazeButton;
-use crate::maze::states::MazeState;
-
-pub fn button_generate_clicked(
-    button_query: Query<&Interaction, (Changed<Interaction>, With<GenerateMazeButton>)>,
-    mut maze_next_state: ResMut<NextState<MazeState>>,
-) {
-    for interaction in button_query.iter() {
-        if let Interaction::Pressed = interaction {
-            maze_next_state.set(MazeState::Generation);
+pub fn button_interaction_system<T, S>(
+    next_state: S,
+    interaction_type: Interaction,
+) -> impl Fn(Query<'_, '_, &Interaction, (Changed<Interaction>, With<T>)>, ResMut<'_, NextState<S>>)
+where
+    T: Component,
+    S: States + FreelyMutableState + Copy,
+{
+    move |button_query: Query<&Interaction, (Changed<Interaction>, With<T>)>,
+          mut next_state_res: ResMut<NextState<S>>| {
+        for interaction in button_query.iter() {
+            if interaction_type == *interaction {
+                next_state_res.set(next_state);
+            }
         }
     }
 }

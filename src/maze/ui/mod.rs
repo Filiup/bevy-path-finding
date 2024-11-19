@@ -1,10 +1,13 @@
 mod buttons;
 mod interactions;
 
-use super::window::{UI_WINDOW_HEIGHT, UI_WINDOW_WIDTH};
+use super::{
+    states::MazeState,
+    window::{UI_WINDOW_HEIGHT, UI_WINDOW_WIDTH},
+};
 use bevy::prelude::*;
 use buttons::{spawn_action_button, GenerateMazeButton, LoadMazeButton, SaveMazeButton};
-use interactions::button_generate_clicked;
+use interactions::button_interaction_system;
 
 pub fn generate_ui(mut commands: Commands) {
     commands
@@ -39,7 +42,12 @@ pub struct UiPlugin;
 
 impl Plugin for UiPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, generate_ui)
-            .add_systems(Update, button_generate_clicked);
+        app.add_systems(Startup, generate_ui).add_systems(
+            Update,
+            button_interaction_system::<GenerateMazeButton, _>(
+                MazeState::Generation,
+                Interaction::Pressed,
+            ),
+        );
     }
 }
