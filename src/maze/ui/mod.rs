@@ -1,6 +1,7 @@
 #[macro_use]
 mod interactions;
 mod buttons;
+mod slider;
 
 use super::{
     states::MazeState,
@@ -14,6 +15,7 @@ use bevy::color::Color;
 use bevy::prelude::*;
 use buttons::{spawn_action_button, GenerateMazeButton, LoadMazeButton, SaveMazeButton};
 use interactions::{button_hover_change_color, button_state_system};
+use slider::{change_slider_state, move_slider, spawn_slider};
 
 pub fn generate_ui(mut commands: Commands) {
     commands
@@ -41,6 +43,9 @@ pub fn generate_ui(mut commands: Commands) {
         })
         .with_children(|builder| {
             spawn_action_button(builder, LoadMazeButton, "Load maze");
+        })
+        .with_children(|builder| {
+            spawn_slider(builder);
         });
 }
 
@@ -56,6 +61,8 @@ impl Plugin for UiPlugin {
                     Interaction::Pressed,
                 ),
                 create_buttons_hover_system!(GenerateMazeButton, SaveMazeButton, LoadMazeButton),
+                change_slider_state,
+                move_slider,
             ),
         );
     }
