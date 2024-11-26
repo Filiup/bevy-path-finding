@@ -1,5 +1,11 @@
 use bevy::{ecs::system::EntityCommands, input::mouse::MouseMotion, prelude::*};
 
+pub const SLIDER_WIDTH: f32 = 180.0;
+pub const SLIDER_HEIGHT: f32 = 10.0;
+
+pub const SLIDER_HANDLE_WIDTH: f32 = 20.0;
+pub const SLIDER_HANDLE_HEIGHT: f32 = 20.0;
+
 #[derive(Component)]
 pub struct Slider;
 
@@ -19,8 +25,8 @@ fn spawn_slider_handle(builder: &mut ChildBuilder) {
     builder.spawn((
         NodeBundle {
             style: Style {
-                width: Val::Px(20.0),
-                height: Val::Px(20.0),
+                width: Val::Px(SLIDER_HANDLE_WIDTH),
+                height: Val::Px(SLIDER_HANDLE_HEIGHT),
                 ..default()
             },
 
@@ -37,8 +43,8 @@ pub fn spawn_slider<'a>(builder: &'a mut ChildBuilder) -> EntityCommands<'a> {
         NodeBundle {
             background_color: Color::linear_rgb(255.0, 0.0, 0.0).into(),
             style: Style {
-                width: Val::Px(180.0),
-                height: Val::Px(10.0),
+                width: Val::Px(SLIDER_WIDTH),
+                height: Val::Px(SLIDER_HEIGHT),
                 justify_content: JustifyContent::Start,
                 align_items: AlignItems::Center,
                 ..default()
@@ -93,7 +99,10 @@ pub fn move_slider(
                 _ => 0.0,
             };
 
-            slider_handle_style.left = Val::Px(current_position_left + ev.delta.x);
+            let new_value = current_position_left + ev.delta.x;
+            if new_value > 0.0 && new_value < SLIDER_WIDTH - SLIDER_HANDLE_WIDTH {
+                slider_handle_style.left = Val::Px(new_value);
+            }
         }
     }
 }
