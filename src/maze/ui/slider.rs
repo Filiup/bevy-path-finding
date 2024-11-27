@@ -6,19 +6,24 @@ pub const SLIDER_HEIGHT: f32 = 10.0;
 pub const SLIDER_HANDLE_WIDTH: f32 = 20.0;
 pub const SLIDER_HANDLE_HEIGHT: f32 = 20.0;
 
-#[derive(Component)]
-pub struct Slider;
+pub const SLIDER_START_VALUE: i32 = 1000;
 
 #[derive(Clone, Copy, PartialEq, Default)]
 pub enum SliderHandleState {
     Pressed(f32),
-    
+
     #[default]
     Released,
 }
 
 #[derive(Component)]
-pub struct SliderHandle(SliderHandleState);
+pub struct Slider;
+
+#[derive(Component, Default)]
+pub struct SliderHandle {
+    state: SliderHandleState,
+    pub value: i32,
+}
 
 fn spawn_slider_handle(builder: &mut ChildBuilder) {
     builder.spawn((
@@ -32,7 +37,7 @@ fn spawn_slider_handle(builder: &mut ChildBuilder) {
             background_color: Color::linear_rgb(30.0, 144.0, 255.0).into(),
             ..default()
         },
-        SliderHandle(SliderHandleState::default()),
+        SliderHandle::default(),
         Interaction::default(),
     ));
 }
@@ -82,11 +87,29 @@ pub fn change_slider_state(
                 _ => 0.0,
             };
 
-            slider_handle.0 = SliderHandleState::Pressed(cursor_position.x - current_left);
+            slider_handle.state = SliderHandleState::Pressed(cursor_position.x - current_left);
         }
     }
     if !left_click_pressed {
-        slider_handle.0 = SliderHandleState::Released;
+        slider_handle.state = SliderHandleState::Released;
+    }
+}
+
+pub fn change_slider_value(mut slider_handle_query: Query<(&Style, &mut SliderHandle)>) {
+    let (slider_handle_style, mut slider_handle) = slider_handle_query.single_mut();
+
+    if let SliderHandleState::Pressed(_) = slider_handle.state {
+        let current_left = match slider_handle_style.left {
+            Val::Px(value) => value,
+            _ => 0.0,
+        };
+
+        let max_position = SLIDER_WIDTH - SLIDER_HANDLE_WIDTH;
+        let normalized_value = current_left / max_position;
+
+        slider_handle.value = ((1.0 - normalized_value) * SLIDER_START_VALUE as f32) as i32;
+
+        println!("{}", slider_handle.value);
     }
 }
 
@@ -97,7 +120,7 @@ pub fn move_slider(
     let (mut slider_handle_style, slider_handle) = slider_handle_query.get_single_mut().unwrap();
     let primary_window = window_query.single();
 
-    if let SliderHandleState::Pressed(start_pressed_x) = slider_handle.0 {
+    if let SliderHandleState::Pressed(start_pressed_x) = slider_handle.state {
         if let Some(cursor_position) = primary_window.cursor_position() {
             let new_left = (cursor_position.x - start_pressed_x)
                 .clamp(0.0, SLIDER_WIDTH - SLIDER_HANDLE_WIDTH);
