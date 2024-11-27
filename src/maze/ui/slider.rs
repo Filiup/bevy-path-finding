@@ -1,4 +1,4 @@
-use bevy::{ecs::system::EntityCommands, input::mouse::MouseMotion, prelude::*};
+use bevy::{ecs::system::EntityCommands, prelude::*, window::PrimaryWindow};
 
 pub const SLIDER_WIDTH: f32 = 180.0;
 pub const SLIDER_HEIGHT: f32 = 10.0;
@@ -11,11 +11,10 @@ pub struct Slider;
 
 #[derive(Clone, Copy, PartialEq, Default)]
 pub enum SliderHandleState {
-    Pressed,
-    Released,
-
+    Pressed(f32),
+    
     #[default]
-    None,
+    Released,
 }
 
 #[derive(Component)]
@@ -33,7 +32,7 @@ fn spawn_slider_handle(builder: &mut ChildBuilder) {
             background_color: Color::linear_rgb(30.0, 144.0, 255.0).into(),
             ..default()
         },
-        SliderHandle(SliderHandleState::None),
+        SliderHandle(SliderHandleState::default()),
         Interaction::default(),
     ));
 }
@@ -60,49 +59,50 @@ pub fn spawn_slider<'a>(builder: &'a mut ChildBuilder) -> EntityCommands<'a> {
 }
 
 pub fn change_slider_state(
-    buttons: Res<ButtonInput<MouseButton>>,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+    mouse_buttons: Res<ButtonInput<MouseButton>>,
+    mut slider_handle_query: Query<(&mut SliderHandle, &Style)>,
     slider_handle_interraction_query: Query<
         &Interaction,
         (Changed<Interaction>, With<SliderHandle>),
     >,
-    mut slider_handle_query: Query<&mut SliderHandle>,
 ) {
-    let mut slider_handle = slider_handle_query.get_single_mut().unwrap();
+    let primary_window = window_query.single();
+    let (mut slider_handle, style) = slider_handle_query.single_mut();
 
     let pressed = slider_handle_interraction_query
         .into_iter()
         .any(|&i| i == Interaction::Pressed);
-
-    let left_click_pressed = buttons.pressed(MouseButton::Left);
+    let left_click_pressed = mouse_buttons.pressed(MouseButton::Left);
 
     if pressed {
-        slider_handle.0 = SliderHandleState::Pressed
-    }
+        if let Some(cursor_position) = primary_window.cursor_position() {
+            let current_left = match style.left {
+                Val::Px(value) => value,
+                _ => 0.0,
+            };
 
+            slider_handle.0 = SliderHandleState::Pressed(cursor_position.x - current_left);
+        }
+    }
     if !left_click_pressed {
-        slider_handle.0 = SliderHandleState::Released
+        slider_handle.0 = SliderHandleState::Released;
     }
 }
 
 pub fn move_slider(
+    window_query: Query<&Window, With<PrimaryWindow>>,
     mut slider_handle_query: Query<(&mut Style, &SliderHandle)>,
-    mut mouse_motion_reader: EventReader<MouseMotion>,
 ) {
     let (mut slider_handle_style, slider_handle) = slider_handle_query.get_single_mut().unwrap();
+    let primary_window = window_query.single();
 
-    if slider_handle.0 == SliderHandleState::Pressed {
-        for ev in mouse_motion_reader.read() {
-            // let mut slider_handle_style = slider_handle_query.get_single_mut().unwrap();
+    if let SliderHandleState::Pressed(start_pressed_x) = slider_handle.0 {
+        if let Some(cursor_position) = primary_window.cursor_position() {
+            let new_left = (cursor_position.x - start_pressed_x)
+                .clamp(0.0, SLIDER_WIDTH - SLIDER_HANDLE_WIDTH);
 
-            let current_position_left = match slider_handle_style.left {
-                Val::Px(px) => px,
-                _ => 0.0,
-            };
-
-            let new_value = current_position_left + ev.delta.x;
-            if new_value > 0.0 && new_value < SLIDER_WIDTH - SLIDER_HANDLE_WIDTH {
-                slider_handle_style.left = Val::Px(new_value);
-            }
+            slider_handle_style.left = Val::Px(new_left);
         }
     }
 }
