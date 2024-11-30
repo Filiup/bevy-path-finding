@@ -22,16 +22,12 @@ pub fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {
 
             let entity = commands
                 .spawn((
-                    SpriteBundle {
-                        transform: Transform::from_xyz(x_position, y_position, 0.0),
-
-                        sprite: Sprite {
-                            color: CELL_COLOR,
-                            custom_size: Some(Vec2::new(BLOCK_SIZE, BLOCK_SIZE)),
-                            ..default()
-                        },
+                    Sprite {
+                        color: CELL_COLOR,
+                        custom_size: Some(Vec2::new(BLOCK_SIZE, BLOCK_SIZE)),
                         ..default()
                     },
+                    Transform::from_xyz(x_position, y_position, 1.0),
                     MazeCell {
                         row,
                         col,
@@ -40,19 +36,12 @@ pub fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {
                 ))
                 .with_children(|parent| {
                     parent.spawn((
-                        SpriteBundle {
-                            transform: Transform::from_xyz(
-                                0.0,
-                                half_block_size - half_wall_height,
-                                0.0,
-                            ),
-                            sprite: Sprite {
-                                color: WALL_COLOR,
-                                custom_size: Some(Vec2::new(BLOCK_SIZE, WALL_HEIGHT)),
-                                ..default()
-                            },
+                        Sprite {
+                            color: WALL_COLOR,
+                            custom_size: Some(Vec2::new(BLOCK_SIZE, WALL_HEIGHT)),
                             ..default()
                         },
+                        Transform::from_xyz(0.0, half_block_size - half_wall_height, 1.0),
                         MazeWall {
                             direction: WallDirection::Top,
                         },
@@ -60,19 +49,12 @@ pub fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {
                 })
                 .with_children(|parent| {
                     parent.spawn((
-                        SpriteBundle {
-                            transform: Transform::from_xyz(
-                                0.0,
-                                -half_block_size + half_wall_height,
-                                0.0,
-                            ),
-                            sprite: Sprite {
-                                color: WALL_COLOR,
-                                custom_size: Some(Vec2::new(BLOCK_SIZE, WALL_HEIGHT)),
-                                ..default()
-                            },
+                        Sprite {
+                            color: WALL_COLOR,
+                            custom_size: Some(Vec2::new(BLOCK_SIZE, WALL_HEIGHT)),
                             ..default()
                         },
+                        Transform::from_xyz(0.0, -half_block_size + half_wall_height, 1.0),
                         MazeWall {
                             direction: WallDirection::Bottom,
                         },
@@ -80,19 +62,12 @@ pub fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {
                 })
                 .with_children(|parent| {
                     parent.spawn((
-                        SpriteBundle {
-                            transform: Transform::from_xyz(
-                                half_block_size - half_wall_height,
-                                0.0,
-                                0.0,
-                            ),
-                            sprite: Sprite {
-                                color: WALL_COLOR,
-                                custom_size: Some(Vec2::new(WALL_HEIGHT, BLOCK_SIZE)),
-                                ..default()
-                            },
+                        Sprite {
+                            color: WALL_COLOR,
+                            custom_size: Some(Vec2::new(WALL_HEIGHT, BLOCK_SIZE)),
                             ..default()
                         },
+                        Transform::from_xyz(half_block_size - half_wall_height, 0.0, 1.0),
                         MazeWall {
                             direction: WallDirection::Right,
                         },
@@ -100,19 +75,12 @@ pub fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {
                 })
                 .with_children(|parent| {
                     parent.spawn((
-                        SpriteBundle {
-                            transform: Transform::from_xyz(
-                                -half_block_size + half_wall_height,
-                                0.0,
-                                0.0,
-                            ),
-                            sprite: Sprite {
-                                color: WALL_COLOR,
-                                custom_size: Some(Vec2::new(WALL_HEIGHT, BLOCK_SIZE)),
-                                ..default()
-                            },
+                        Sprite {
+                            color: WALL_COLOR,
+                            custom_size: Some(Vec2::new(WALL_HEIGHT, BLOCK_SIZE)),
                             ..default()
                         },
+                        Transform::from_xyz(-half_block_size + half_wall_height, 0.0, 1.0),
                         MazeWall {
                             direction: WallDirection::Left,
                         },

@@ -14,14 +14,14 @@ pub const WINDOW_WIDTH: f32 = GRID_WINDOW_WIDTH + UI_WINDOW_WIDTH;
 pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<PrimaryWindow>>) {
     let primary_window = window_query.get_single().unwrap();
 
-    commands.spawn(Camera2dBundle {
-        transform: Transform::from_xyz(
+    commands.spawn((
+        Camera2d,
+        Transform::from_xyz(
             primary_window.width() / 2.0,
             primary_window.height() / 2.0,
             0.0,
         ),
-        ..default()
-    });
+    ));
 }
 
 pub struct MazeWindowPlugin;

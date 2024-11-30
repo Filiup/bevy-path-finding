@@ -27,14 +27,10 @@ pub struct SliderHandle {
 
 fn spawn_slider_handle(builder: &mut ChildBuilder) {
     builder.spawn((
-        NodeBundle {
-            style: Style {
-                width: Val::Px(SLIDER_HANDLE_WIDTH),
-                height: Val::Px(SLIDER_HANDLE_HEIGHT),
-                ..default()
-            },
-
-            background_color: Color::linear_rgb(30.0, 144.0, 255.0).into(),
+        BackgroundColor(Color::linear_rgb(30.0, 144.0, 255.0)),
+        Node {
+            width: Val::Px(SLIDER_HANDLE_WIDTH),
+            height: Val::Px(SLIDER_HANDLE_HEIGHT),
             ..default()
         },
         SliderHandle::default(),
@@ -44,15 +40,13 @@ fn spawn_slider_handle(builder: &mut ChildBuilder) {
 
 pub fn spawn_slider<'a>(builder: &'a mut ChildBuilder) -> EntityCommands<'a> {
     let mut slider = builder.spawn((
-        NodeBundle {
-            background_color: Color::linear_rgb(255.0, 0.0, 0.0).into(),
-            style: Style {
-                width: Val::Px(SLIDER_WIDTH),
-                height: Val::Px(SLIDER_HEIGHT),
-                justify_content: JustifyContent::Start,
-                align_items: AlignItems::Center,
-                ..default()
-            },
+        BackgroundColor(Color::linear_rgb(255.0, 0.0, 0.0)),
+        Node {
+            width: Val::Px(SLIDER_WIDTH),
+            height: Val::Px(SLIDER_HEIGHT),
+            justify_content: JustifyContent::Start,
+            align_items: AlignItems::Center,
+
             ..default()
         },
         Slider,
@@ -66,14 +60,14 @@ pub fn spawn_slider<'a>(builder: &'a mut ChildBuilder) -> EntityCommands<'a> {
 pub fn change_slider_state(
     window_query: Query<&Window, With<PrimaryWindow>>,
     mouse_buttons: Res<ButtonInput<MouseButton>>,
-    mut slider_handle_query: Query<(&mut SliderHandle, &Style)>,
+    mut slider_handle_query: Query<(&mut SliderHandle, &Node)>,
     slider_handle_interraction_query: Query<
         &Interaction,
         (Changed<Interaction>, With<SliderHandle>),
     >,
 ) {
     let primary_window = window_query.single();
-    let (mut slider_handle, style) = slider_handle_query.single_mut();
+    let (mut slider_handle, node) = slider_handle_query.single_mut();
 
     let pressed = slider_handle_interraction_query
         .into_iter()
@@ -82,7 +76,7 @@ pub fn change_slider_state(
 
     if pressed {
         if let Some(cursor_position) = primary_window.cursor_position() {
-            let current_left = match style.left {
+            let current_left = match node.left {
                 Val::Px(value) => value,
                 _ => 0.0,
             };
@@ -95,11 +89,11 @@ pub fn change_slider_state(
     }
 }
 
-pub fn change_slider_value(mut slider_handle_query: Query<(&Style, &mut SliderHandle)>) {
-    let (slider_handle_style, mut slider_handle) = slider_handle_query.single_mut();
+pub fn change_slider_value(mut slider_handle_query: Query<(&Node, &mut SliderHandle)>) {
+    let (slider_handle_node, mut slider_handle) = slider_handle_query.single_mut();
 
     if let SliderHandleState::Pressed(_) = slider_handle.state {
-        let current_left = match slider_handle_style.left {
+        let current_left = match slider_handle_node.left {
             Val::Px(value) => value,
             _ => 0.0,
         };
@@ -115,9 +109,9 @@ pub fn change_slider_value(mut slider_handle_query: Query<(&Style, &mut SliderHa
 
 pub fn move_slider(
     window_query: Query<&Window, With<PrimaryWindow>>,
-    mut slider_handle_query: Query<(&mut Style, &SliderHandle)>,
+    mut slider_handle_query: Query<(&mut Node, &SliderHandle)>,
 ) {
-    let (mut slider_handle_style, slider_handle) = slider_handle_query.get_single_mut().unwrap();
+    let (mut slider_handle_node, slider_handle) = slider_handle_query.get_single_mut().unwrap();
     let primary_window = window_query.single();
 
     if let SliderHandleState::Pressed(start_pressed_x) = slider_handle.state {
@@ -125,7 +119,7 @@ pub fn move_slider(
             let new_left = (cursor_position.x - start_pressed_x)
                 .clamp(0.0, SLIDER_WIDTH - SLIDER_HANDLE_WIDTH);
 
-            slider_handle_style.left = Val::Px(new_left);
+            slider_handle_node.left = Val::Px(new_left);
         }
     }
 }

@@ -6,6 +6,7 @@ use bevy::{
 
 use super::{BUTTON_COLOR, BUTTON_HOVER_COLOR};
 
+#[allow(clippy::type_complexity)]
 pub fn button_state_system<T, S>(
     next_state: S,
     interaction_type: Interaction,
