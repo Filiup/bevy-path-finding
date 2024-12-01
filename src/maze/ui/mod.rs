@@ -1,5 +1,3 @@
-#[macro_use]
-mod interactions;
 mod buttons;
 mod slider;
 
@@ -13,12 +11,20 @@ pub const BUTTON_HOVER_COLOR: Color = Color::srgb(173.0 / 255.0, 216.0 / 255.0, 
 
 use bevy::color::Color;
 use bevy::prelude::*;
-use buttons::{spawn_action_button, GenerateMazeButton, LoadMazeButton, SaveMazeButton};
-use interactions::{button_hover_change_color, button_state_system};
+use buttons::{button_state_system, spawn_action_button, ActionButtonsPlugin};
 use slider::{spawn_slider, SliderDirection, SlidersPlugin};
 
 #[derive(Component)]
 pub struct ChangeGenerationSpeedSlider;
+
+#[derive(Component)]
+pub struct GenerateMazeButton;
+
+#[derive(Component)]
+pub struct LoadMazeButton;
+
+#[derive(Component)]
+pub struct SaveMazeButton;
 
 pub fn generate_ui(mut commands: Commands) {
     commands
@@ -59,19 +65,13 @@ pub struct UiPlugin;
 impl Plugin for UiPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(SlidersPlugin)
+            .add_plugins(ActionButtonsPlugin)
             .add_systems(Startup, generate_ui)
             .add_systems(
                 Update,
-                (
-                    button_state_system::<GenerateMazeButton, _>(
-                        MazeState::Generation,
-                        Interaction::Pressed,
-                    ),
-                    create_buttons_hover_system!(
-                        GenerateMazeButton,
-                        SaveMazeButton,
-                        LoadMazeButton
-                    ),
+                button_state_system::<GenerateMazeButton, _>(
+                    MazeState::Generation,
+                    Interaction::Pressed,
                 ),
             );
     }

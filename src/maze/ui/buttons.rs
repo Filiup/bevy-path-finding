@@ -1,15 +1,8 @@
-use bevy::{ecs::system::EntityCommands, prelude::*};
-
-use super::BUTTON_COLOR;
-
-#[derive(Component)]
-pub struct GenerateMazeButton;
+use super::{BUTTON_COLOR, BUTTON_HOVER_COLOR};
+use bevy::{ecs::system::EntityCommands, prelude::*, state::state::FreelyMutableState};
 
 #[derive(Component)]
-pub struct LoadMazeButton;
-
-#[derive(Component)]
-pub struct SaveMazeButton;
+pub struct ActionButton;
 
 pub fn spawn_action_button<'a>(
     builder: &'a mut ChildBuilder,
@@ -36,10 +29,50 @@ pub fn spawn_action_button<'a>(
             ..default()
         },
         Button,
+        ActionButton,
         component,
     ));
 
     button.with_children(button_text);
 
     button
+}
+
+#[allow(clippy::type_complexity)]
+pub fn button_state_system<T, S>(
+    next_state: S,
+    interaction_type: Interaction,
+) -> impl Fn(Query<'_, '_, &Interaction, (Changed<Interaction>, With<T>)>, ResMut<'_, NextState<S>>)
+where
+    T: Component,
+    S: States + FreelyMutableState + Copy,
+{
+    move |button_query: Query<&Interaction, (Changed<Interaction>, With<T>)>,
+          mut next_state_res: ResMut<NextState<S>>| {
+        for interaction in button_query.into_iter() {
+            if *interaction == interaction_type {
+                next_state_res.set(next_state);
+            }
+        }
+    }
+}
+
+pub fn buttons_hover_changle_color(
+    mut buttons_color_query: Query<(&Interaction, &mut BackgroundColor), With<ActionButton>>,
+) {
+    for (interaction, mut color) in buttons_color_query.iter_mut() {
+        match &interaction {
+            Interaction::Hovered => *color = BUTTON_HOVER_COLOR.into(),
+            Interaction::None => *color = BUTTON_COLOR.into(),
+            _ => (),
+        }
+    }
+}
+
+pub struct ActionButtonsPlugin;
+
+impl Plugin for ActionButtonsPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_systems(Update, buttons_hover_changle_color);
+    }
 }
