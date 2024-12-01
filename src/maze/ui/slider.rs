@@ -6,8 +6,6 @@ pub const SLIDER_HEIGHT: f32 = 10.0;
 pub const SLIDER_HANDLE_WIDTH: f32 = 20.0;
 pub const SLIDER_HANDLE_HEIGHT: f32 = 20.0;
 
-pub const SLIDER_START_VALUE: i32 = 1000;
-
 #[derive(Clone, Copy, PartialEq, Default)]
 pub enum SliderHandleState {
     Pressed(f32),
@@ -25,22 +23,27 @@ pub struct Slider;
 #[derive(Component)]
 pub struct SliderText;
 
-#[derive(Component)]
+#[derive(Default, PartialEq, Eq, Clone, Copy)]
+pub enum SliderDirection {
+    #[default]
+    Ascending,
+    Descending,
+}
+
+#[derive(Component, Default)]
 pub struct SliderHandle {
     state: SliderHandleState,
-    pub value: i32,
+    pub current_value: i32,
+    pub max_value: i32,
+    pub direction: SliderDirection,
 }
 
-impl Default for SliderHandle {
-    fn default() -> Self {
-        Self {
-            value: SLIDER_START_VALUE,
-            state: SliderHandleState::default(),
-        }
-    }
-}
-
-fn spawn_slider_handle(builder: &mut ChildBuilder, slider_handle_marker: impl Component) {
+fn spawn_slider_handle(
+    builder: &mut ChildBuilder,
+    slider_handle_marker: impl Component,
+    slider_handle_max_value: i32,
+    slider_handle_drirection: SliderDirection,
+) {
     builder.spawn((
         BackgroundColor(Color::linear_rgb(30.0, 144.0, 255.0)),
         Node {
@@ -48,19 +51,34 @@ fn spawn_slider_handle(builder: &mut ChildBuilder, slider_handle_marker: impl Co
             height: Val::Px(SLIDER_HANDLE_HEIGHT),
             ..default()
         },
-        SliderHandle::default(),
+        SliderHandle {
+            max_value: slider_handle_max_value,
+            direction: slider_handle_drirection,
+            ..default()
+        },
         Interaction::default(),
         slider_handle_marker,
     ));
 }
 
-fn spawn_slider_text<'a>(builder: &'a mut ChildBuilder) -> EntityCommands<'a> {
-    builder.spawn((Text::new(SLIDER_START_VALUE.to_string()), SliderText))
+fn spawn_slider_text<'a>(
+    builder: &'a mut ChildBuilder,
+    slider_handle_max_value: i32,
+    slider_handle_drirection: SliderDirection,
+) -> EntityCommands<'a> {
+    let value = match slider_handle_drirection {
+        SliderDirection::Ascending => 0,
+        SliderDirection::Descending => slider_handle_max_value,
+    };
+
+    builder.spawn((Text::new(value.to_string()), SliderText))
 }
 
 fn spawn_slider_track<'a>(
     builder: &'a mut ChildBuilder,
     slider_handle_marker: impl Component,
+    slider_handle_max_value: i32,
+    slider_handle_drirection: SliderDirection,
 ) -> EntityCommands<'a> {
     let mut slider = builder.spawn((
         BackgroundColor(Color::linear_rgb(255.0, 0.0, 0.0)),
@@ -75,13 +93,22 @@ fn spawn_slider_track<'a>(
         SliderTrack,
     ));
 
-    slider.with_children(|builder| spawn_slider_handle(builder, slider_handle_marker));
+    slider.with_children(|builder| {
+        spawn_slider_handle(
+            builder,
+            slider_handle_marker,
+            slider_handle_max_value,
+            slider_handle_drirection,
+        )
+    });
 
     slider
 }
 
 pub fn spawn_slider<'a>(
     builder: &'a mut ChildBuilder,
+    slider_handle_max_value: i32,
+    slider_handle_drirection: SliderDirection,
     slider_handle_marker: impl Component,
 ) -> EntityCommands<'a> {
     let mut slider_container = builder.spawn((
@@ -97,11 +124,16 @@ pub fn spawn_slider<'a>(
     ));
 
     slider_container.with_children(|builder| {
-        spawn_slider_track(builder, slider_handle_marker);
+        spawn_slider_track(
+            builder,
+            slider_handle_marker,
+            slider_handle_max_value,
+            slider_handle_drirection,
+        );
     });
 
     slider_container.with_children(|builder| {
-        spawn_slider_text(builder);
+        spawn_slider_text(builder, slider_handle_max_value, slider_handle_drirection);
     });
 
     slider_container
@@ -114,6 +146,11 @@ pub fn change_sliders_text(
     slider_handle_query: Query<(&SliderHandle, &Parent)>,
 ) {
     for (slider_handle, slider_handle_parent) in slider_handle_query.into_iter() {
+        let is_pressed = matches!(slider_handle.state, SliderHandleState::Pressed(_));
+        if !is_pressed {
+            continue;
+        }
+
         let slider_track_parent = slider_track_parent_query
             .get(slider_handle_parent.get())
             .unwrap();
@@ -123,7 +160,7 @@ pub fn change_sliders_text(
             .find(|(_, parent)| parent.get() == slider_track_parent.get());
 
         if let Some((mut text, _)) = slider_text {
-            text.0 = slider_handle.value.to_string();
+            text.0 = slider_handle.current_value.to_string();
         }
     }
 }
@@ -167,7 +204,14 @@ pub fn change_sliders_value(mut slider_handle_query: Query<(&Node, &mut SliderHa
             let max_position = SLIDER_WIDTH - SLIDER_HANDLE_WIDTH;
             let normalized_value = current_left / max_position;
 
-            slider_handle.value = ((1.0 - normalized_value) * SLIDER_START_VALUE as f32) as i32;
+            slider_handle.current_value = match slider_handle.direction {
+                SliderDirection::Ascending => {
+                    (normalized_value * slider_handle.max_value as f32) as i32
+                }
+                SliderDirection::Descending => {
+                    ((1.0 - normalized_value) * slider_handle.max_value as f32) as i32
+                }
+            }
         }
     }
 }
