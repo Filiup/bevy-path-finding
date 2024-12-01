@@ -6,12 +6,10 @@ use super::{
     window::{UI_WINDOW_HEIGHT, UI_WINDOW_WIDTH},
 };
 
-pub const BUTTON_COLOR: Color = Color::srgb(128.0 / 255.0, 128.0 / 255.0, 128.0 / 255.0);
-pub const BUTTON_HOVER_COLOR: Color = Color::srgb(173.0 / 255.0, 216.0 / 255.0, 230.0 / 255.0);
-
-use bevy::color::Color;
 use bevy::prelude::*;
-use buttons::{button_state_system, spawn_action_button, ActionButtonsPlugin};
+use buttons::{
+    builders::spawn_action_button, interactions::button_state_system, ActionButtonsPlugin,
+};
 use slider::{spawn_slider, SliderDirection, SlidersPlugin};
 
 #[derive(Component)]
