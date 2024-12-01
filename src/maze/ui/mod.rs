@@ -1,5 +1,5 @@
 mod buttons;
-mod slider;
+mod sliders;
 
 use super::{
     states::MazeState,
@@ -10,7 +10,7 @@ use bevy::prelude::*;
 use buttons::{
     builders::spawn_action_button, interactions::button_state_system, ActionButtonsPlugin,
 };
-use slider::{spawn_slider, SliderDirection, SlidersPlugin};
+use sliders::{builders::spawn_slider, SliderDirection, SlidersPlugin};
 
 #[derive(Component)]
 pub struct ChangeGenerationSpeedSlider;

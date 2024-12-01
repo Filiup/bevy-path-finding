@@ -1,8 +1,5 @@
-use super::BUTTON_COLOR;
+use super::*;
 use bevy::prelude::*;
-
-#[derive(Component)]
-pub struct ActionButton;
 
 pub fn spawn_action_button<'a>(
     builder: &'a mut ChildBuilder,
