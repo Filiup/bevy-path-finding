@@ -15,10 +15,7 @@ use bevy::color::Color;
 use bevy::prelude::*;
 use buttons::{spawn_action_button, GenerateMazeButton, LoadMazeButton, SaveMazeButton};
 use interactions::{button_hover_change_color, button_state_system};
-use slider::{
-    change_slider_text, change_sliders_state, change_sliders_value, move_sliders, spawn_slider,
-    spawn_slider_text, Slider, SliderHandle, SlidersPlugin,
-};
+use slider::{spawn_slider, SlidersPlugin};
 
 #[derive(Component)]
 pub struct ChangeSpeedSlider;
@@ -49,7 +46,6 @@ pub fn generate_ui(mut commands: Commands) {
         })
         .with_children(|builder| {
             spawn_slider(builder, ChangeSpeedSlider);
-            spawn_slider_text(builder);
         });
 }
 

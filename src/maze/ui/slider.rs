@@ -17,6 +17,9 @@ pub enum SliderHandleState {
 }
 
 #[derive(Component)]
+pub struct SliderTrack;
+
+#[derive(Component)]
 pub struct Slider;
 
 #[derive(Component)]
@@ -51,11 +54,11 @@ fn spawn_slider_handle(builder: &mut ChildBuilder, slider_handle_marker: impl Co
     ));
 }
 
-pub fn spawn_slider_text<'a>(builder: &'a mut ChildBuilder) -> EntityCommands<'a> {
+fn spawn_slider_text<'a>(builder: &'a mut ChildBuilder) -> EntityCommands<'a> {
     builder.spawn((Text::new(SLIDER_START_VALUE.to_string()), SliderText))
 }
 
-pub fn spawn_slider<'a>(
+fn spawn_slider_track<'a>(
     builder: &'a mut ChildBuilder,
     slider_handle_marker: impl Component,
 ) -> EntityCommands<'a> {
@@ -69,7 +72,7 @@ pub fn spawn_slider<'a>(
 
             ..default()
         },
-        Slider,
+        SliderTrack,
     ));
 
     slider.with_children(|builder| spawn_slider_handle(builder, slider_handle_marker));
@@ -77,14 +80,51 @@ pub fn spawn_slider<'a>(
     slider
 }
 
-pub fn change_slider_text(
-    slider_handle_query: Query<&SliderHandle, Changed<SliderHandle>>,
-    mut sliter_text_query: Query<&mut Text, With<SliderText>>,
+pub fn spawn_slider<'a>(
+    builder: &'a mut ChildBuilder,
+    slider_handle_marker: impl Component,
+) -> EntityCommands<'a> {
+    let mut slider_container = builder.spawn((
+        Node {
+            display: Display::Flex,
+            justify_content: JustifyContent::Center,
+            align_items: AlignItems::Center,
+            flex_direction: FlexDirection::Column,
+            row_gap: Val::Px(10.0),
+            ..default()
+        },
+        Slider,
+    ));
+
+    slider_container.with_children(|builder| {
+        spawn_slider_track(builder, slider_handle_marker);
+    });
+
+    slider_container.with_children(|builder| {
+        spawn_slider_text(builder);
+    });
+
+    slider_container
+}
+
+pub fn change_sliders_text(
+    slider_track_parent_query: Query<&Parent, With<SliderTrack>>,
+
+    mut slider_text_query: Query<(&mut Text, &Parent), With<SliderText>>,
+    slider_handle_query: Query<(&SliderHandle, &Parent)>,
 ) {
-    let slider_handle = slider_handle_query.get_single();
-    if let Ok(slider_handle) = slider_handle {
-        let mut slider_text = sliter_text_query.single_mut();
-        slider_text.0 = slider_handle.value.to_string();
+    for (slider_handle, slider_handle_parent) in slider_handle_query.into_iter() {
+        let slider_track_parent = slider_track_parent_query
+            .get(slider_handle_parent.get())
+            .unwrap();
+
+        let slider_text = slider_text_query
+            .iter_mut()
+            .find(|(_, parent)| parent.get() == slider_track_parent.get());
+
+        if let Some((mut text, _)) = slider_text {
+            text.0 = slider_handle.value.to_string();
+        }
     }
 }
 
@@ -98,7 +138,6 @@ pub fn change_sliders_state(
     >,
 ) {
     let primary_window = window_query.single();
-    // let (mut slider_handle, node) = slider_handle_query.single_mut();
 
     for (mut slider_handle, node) in slider_handle_query.iter_mut() {
         let pressed = slider_handle_interraction_query
@@ -168,7 +207,7 @@ impl Plugin for SlidersPlugin {
                 change_sliders_state,
                 move_sliders,
                 change_sliders_value,
-                change_slider_text,
+                change_sliders_text,
             ),
         );
     }
