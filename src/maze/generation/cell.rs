@@ -5,6 +5,7 @@ use super::{
     color::{ChangeStackColor, ResetStackColor},
     stack::EntityStack,
     walls::DestroyWallsBetween,
+    DEFAULT_CELL_ITERATION_TIMER_VALUE,
 };
 use bevy::prelude::*;
 use rand::prelude::*;
@@ -17,7 +18,10 @@ pub struct CellIterationTimer {
 impl Default for CellIterationTimer {
     fn default() -> Self {
         CellIterationTimer {
-            timer: Timer::new(Duration::from_millis(100), TimerMode::Repeating),
+            timer: Timer::new(
+                Duration::from_millis(DEFAULT_CELL_ITERATION_TIMER_VALUE),
+                TimerMode::Repeating,
+            ),
         }
     }
 }

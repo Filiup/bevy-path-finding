@@ -68,10 +68,10 @@ pub fn change_sliders_value(mut slider_handle_query: Query<(&Node, &mut SliderHa
 
             slider_handle.current_value = match slider_handle.direction {
                 SliderDirection::Ascending => {
-                    (normalized_value * slider_handle.max_value as f32) as i32
+                    (normalized_value * slider_handle.max_value as f32) as u64
                 }
                 SliderDirection::Descending => {
-                    ((1.0 - normalized_value) * slider_handle.max_value as f32) as i32
+                    ((1.0 - normalized_value) * slider_handle.max_value as f32) as u64
                 }
             }
         }

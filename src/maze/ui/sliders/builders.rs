@@ -5,9 +5,14 @@ use super::*;
 fn spawn_slider_handle(
     builder: &mut ChildBuilder,
     slider_handle_marker: impl Component,
-    slider_handle_max_value: i32,
+    slider_handle_max_value: u64,
     slider_handle_drirection: SliderDirection,
 ) {
+    let current_value = match slider_handle_drirection {
+        SliderDirection::Ascending => 0,
+        SliderDirection::Descending => slider_handle_max_value,
+    };
+
     builder.spawn((
         BackgroundColor(Color::linear_rgb(30.0, 144.0, 255.0)),
         Node {
@@ -18,6 +23,7 @@ fn spawn_slider_handle(
         SliderHandle {
             max_value: slider_handle_max_value,
             direction: slider_handle_drirection,
+            current_value,
             ..default()
         },
         Interaction::default(),
@@ -27,7 +33,7 @@ fn spawn_slider_handle(
 
 fn spawn_slider_text<'a>(
     builder: &'a mut ChildBuilder,
-    slider_handle_max_value: i32,
+    slider_handle_max_value: u64,
     slider_handle_drirection: SliderDirection,
 ) -> EntityCommands<'a> {
     let value = match slider_handle_drirection {
@@ -41,7 +47,7 @@ fn spawn_slider_text<'a>(
 fn spawn_slider_track<'a>(
     builder: &'a mut ChildBuilder,
     slider_handle_marker: impl Component,
-    slider_handle_max_value: i32,
+    slider_handle_max_value: u64,
     slider_handle_drirection: SliderDirection,
 ) -> EntityCommands<'a> {
     let mut slider = builder.spawn((
@@ -71,7 +77,7 @@ fn spawn_slider_track<'a>(
 
 pub fn spawn_slider<'a>(
     builder: &'a mut ChildBuilder,
-    slider_handle_max_value: i32,
+    slider_handle_max_value: u64,
     slider_handle_drirection: SliderDirection,
     slider_handle_marker: impl Component,
 ) -> EntityCommands<'a> {

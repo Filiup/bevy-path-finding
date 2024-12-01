@@ -37,8 +37,8 @@ pub enum SliderDirection {
 #[derive(Component, Default)]
 pub struct SliderHandle {
     state: SliderHandleState,
-    pub current_value: i32,
-    pub max_value: i32,
+    pub current_value: u64,
+    pub max_value: u64,
     pub direction: SliderDirection,
 }
 
