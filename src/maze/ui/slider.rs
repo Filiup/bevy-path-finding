@@ -124,37 +124,52 @@ pub fn change_sliders_state(
     }
 }
 
-pub fn change_slider_value(mut slider_handle_query: Query<(&Node, &mut SliderHandle)>) {
-    let (slider_handle_node, mut slider_handle) = slider_handle_query.single_mut();
+pub fn change_sliders_value(mut slider_handle_query: Query<(&Node, &mut SliderHandle)>) {
+    for (slider_handle_node, mut slider_handle) in slider_handle_query.iter_mut() {
+        if let SliderHandleState::Pressed(_) = slider_handle.state {
+            let current_left = match slider_handle_node.left {
+                Val::Px(value) => value,
+                _ => 0.0,
+            };
 
-    if let SliderHandleState::Pressed(_) = slider_handle.state {
-        let current_left = match slider_handle_node.left {
-            Val::Px(value) => value,
-            _ => 0.0,
-        };
+            let max_position = SLIDER_WIDTH - SLIDER_HANDLE_WIDTH;
+            let normalized_value = current_left / max_position;
 
-        let max_position = SLIDER_WIDTH - SLIDER_HANDLE_WIDTH;
-        let normalized_value = current_left / max_position;
-
-        slider_handle.value = ((1.0 - normalized_value) * SLIDER_START_VALUE as f32) as i32;
-
-        println!("{}", slider_handle.value);
+            slider_handle.value = ((1.0 - normalized_value) * SLIDER_START_VALUE as f32) as i32;
+        }
     }
 }
 
-pub fn move_slider(
+pub fn move_sliders(
     window_query: Query<&Window, With<PrimaryWindow>>,
     mut slider_handle_query: Query<(&mut Node, &SliderHandle)>,
 ) {
-    let (mut slider_handle_node, slider_handle) = slider_handle_query.get_single_mut().unwrap();
     let primary_window = window_query.single();
 
-    if let SliderHandleState::Pressed(start_pressed_x) = slider_handle.state {
-        if let Some(cursor_position) = primary_window.cursor_position() {
-            let new_left = (cursor_position.x - start_pressed_x)
-                .clamp(0.0, SLIDER_WIDTH - SLIDER_HANDLE_WIDTH);
+    for (mut slider_handle_node, slider_handle) in slider_handle_query.iter_mut() {
+        if let SliderHandleState::Pressed(start_pressed_x) = slider_handle.state {
+            if let Some(cursor_position) = primary_window.cursor_position() {
+                let new_left = (cursor_position.x - start_pressed_x)
+                    .clamp(0.0, SLIDER_WIDTH - SLIDER_HANDLE_WIDTH);
 
-            slider_handle_node.left = Val::Px(new_left);
+                slider_handle_node.left = Val::Px(new_left);
+            }
         }
+    }
+}
+
+pub struct SlidersPlugin;
+
+impl Plugin for SlidersPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_systems(
+            Update,
+            (
+                change_sliders_state,
+                move_sliders,
+                change_sliders_value,
+                change_slider_text,
+            ),
+        );
     }
 }

@@ -16,8 +16,8 @@ use bevy::prelude::*;
 use buttons::{spawn_action_button, GenerateMazeButton, LoadMazeButton, SaveMazeButton};
 use interactions::{button_hover_change_color, button_state_system};
 use slider::{
-    change_slider_text, change_slider_value, change_sliders_state, move_slider, spawn_slider,
-    spawn_slider_text, Slider, SliderHandle,
+    change_slider_text, change_sliders_state, change_sliders_value, move_sliders, spawn_slider,
+    spawn_slider_text, Slider, SliderHandle, SlidersPlugin,
 };
 
 #[derive(Component)]
@@ -57,19 +57,21 @@ pub struct UiPlugin;
 
 impl Plugin for UiPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, generate_ui).add_systems(
-            Update,
-            (
-                button_state_system::<GenerateMazeButton, _>(
-                    MazeState::Generation,
-                    Interaction::Pressed,
+        app.add_plugins(SlidersPlugin)
+            .add_systems(Startup, generate_ui)
+            .add_systems(
+                Update,
+                (
+                    button_state_system::<GenerateMazeButton, _>(
+                        MazeState::Generation,
+                        Interaction::Pressed,
+                    ),
+                    create_buttons_hover_system!(
+                        GenerateMazeButton,
+                        SaveMazeButton,
+                        LoadMazeButton
+                    ),
                 ),
-                create_buttons_hover_system!(GenerateMazeButton, SaveMazeButton, LoadMazeButton),
-                change_sliders_state,
-                move_slider,
-                change_slider_value,
-                change_slider_text,
-            ),
-        );
+            );
     }
 }
