@@ -1,4 +1,3 @@
-mod main_menu;
 mod menu;
 
 mod buttons;
