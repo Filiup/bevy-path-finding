@@ -16,9 +16,12 @@ use bevy::prelude::*;
 use buttons::{spawn_action_button, GenerateMazeButton, LoadMazeButton, SaveMazeButton};
 use interactions::{button_hover_change_color, button_state_system};
 use slider::{
-    change_slider_state, change_slider_text, change_slider_value, move_slider, spawn_slider,
-    spawn_slider_text,
+    change_slider_text, change_slider_value, change_sliders_state, move_slider, spawn_slider,
+    spawn_slider_text, Slider, SliderHandle,
 };
+
+#[derive(Component)]
+pub struct ChangeSpeedSlider;
 
 pub fn generate_ui(mut commands: Commands) {
     commands
@@ -45,7 +48,7 @@ pub fn generate_ui(mut commands: Commands) {
             spawn_action_button(builder, LoadMazeButton, "Load maze");
         })
         .with_children(|builder| {
-            spawn_slider(builder);
+            spawn_slider(builder, ChangeSpeedSlider);
             spawn_slider_text(builder);
         });
 }
@@ -62,7 +65,7 @@ impl Plugin for UiPlugin {
                     Interaction::Pressed,
                 ),
                 create_buttons_hover_system!(GenerateMazeButton, SaveMazeButton, LoadMazeButton),
-                change_slider_state,
+                change_sliders_state,
                 move_slider,
                 change_slider_value,
                 change_slider_text,

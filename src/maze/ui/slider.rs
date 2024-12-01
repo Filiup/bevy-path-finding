@@ -37,7 +37,7 @@ impl Default for SliderHandle {
     }
 }
 
-fn spawn_slider_handle(builder: &mut ChildBuilder) {
+fn spawn_slider_handle(builder: &mut ChildBuilder, slider_handle_marker: impl Component) {
     builder.spawn((
         BackgroundColor(Color::linear_rgb(30.0, 144.0, 255.0)),
         Node {
@@ -47,6 +47,7 @@ fn spawn_slider_handle(builder: &mut ChildBuilder) {
         },
         SliderHandle::default(),
         Interaction::default(),
+        slider_handle_marker,
     ));
 }
 
@@ -54,7 +55,10 @@ pub fn spawn_slider_text<'a>(builder: &'a mut ChildBuilder) -> EntityCommands<'a
     builder.spawn((Text::new(SLIDER_START_VALUE.to_string()), SliderText))
 }
 
-pub fn spawn_slider<'a>(builder: &'a mut ChildBuilder) -> EntityCommands<'a> {
+pub fn spawn_slider<'a>(
+    builder: &'a mut ChildBuilder,
+    slider_handle_marker: impl Component,
+) -> EntityCommands<'a> {
     let mut slider = builder.spawn((
         BackgroundColor(Color::linear_rgb(255.0, 0.0, 0.0)),
         Node {
@@ -68,7 +72,7 @@ pub fn spawn_slider<'a>(builder: &'a mut ChildBuilder) -> EntityCommands<'a> {
         Slider,
     ));
 
-    slider.with_children(spawn_slider_handle);
+    slider.with_children(|builder| spawn_slider_handle(builder, slider_handle_marker));
 
     slider
 }
@@ -84,7 +88,7 @@ pub fn change_slider_text(
     }
 }
 
-pub fn change_slider_state(
+pub fn change_sliders_state(
     window_query: Query<&Window, With<PrimaryWindow>>,
     mouse_buttons: Res<ButtonInput<MouseButton>>,
     mut slider_handle_query: Query<(&mut SliderHandle, &Node)>,
@@ -94,25 +98,29 @@ pub fn change_slider_state(
     >,
 ) {
     let primary_window = window_query.single();
-    let (mut slider_handle, node) = slider_handle_query.single_mut();
+    // let (mut slider_handle, node) = slider_handle_query.single_mut();
 
-    let pressed = slider_handle_interraction_query
-        .into_iter()
-        .any(|&i| i == Interaction::Pressed);
-    let left_click_pressed = mouse_buttons.pressed(MouseButton::Left);
+    for (mut slider_handle, node) in slider_handle_query.iter_mut() {
+        let pressed = slider_handle_interraction_query
+            .into_iter()
+            .any(|&i| i == Interaction::Pressed);
 
-    if pressed {
-        if let Some(cursor_position) = primary_window.cursor_position() {
-            let current_left = match node.left {
-                Val::Px(value) => value,
-                _ => 0.0,
-            };
+        let left_click_pressed = mouse_buttons.pressed(MouseButton::Left);
 
-            slider_handle.state = SliderHandleState::Pressed(cursor_position.x - current_left);
+        if pressed {
+            if let Some(cursor_position) = primary_window.cursor_position() {
+                let current_left = match node.left {
+                    Val::Px(value) => value,
+                    _ => 0.0,
+                };
+
+                slider_handle.state = SliderHandleState::Pressed(cursor_position.x - current_left);
+            }
         }
-    }
-    if !left_click_pressed {
-        slider_handle.state = SliderHandleState::Released;
+
+        if !left_click_pressed {
+            slider_handle.state = SliderHandleState::Released;
+        }
     }
 }
 
