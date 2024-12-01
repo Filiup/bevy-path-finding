@@ -19,10 +19,22 @@ pub enum SliderHandleState {
 #[derive(Component)]
 pub struct Slider;
 
-#[derive(Component, Default)]
+#[derive(Component)]
+pub struct SliderText;
+
+#[derive(Component)]
 pub struct SliderHandle {
     state: SliderHandleState,
     pub value: i32,
+}
+
+impl Default for SliderHandle {
+    fn default() -> Self {
+        Self {
+            value: SLIDER_START_VALUE,
+            state: SliderHandleState::default(),
+        }
+    }
 }
 
 fn spawn_slider_handle(builder: &mut ChildBuilder) {
@@ -36,6 +48,10 @@ fn spawn_slider_handle(builder: &mut ChildBuilder) {
         SliderHandle::default(),
         Interaction::default(),
     ));
+}
+
+pub fn spawn_slider_text<'a>(builder: &'a mut ChildBuilder) -> EntityCommands<'a> {
+    builder.spawn((Text::new(SLIDER_START_VALUE.to_string()), SliderText))
 }
 
 pub fn spawn_slider<'a>(builder: &'a mut ChildBuilder) -> EntityCommands<'a> {
@@ -55,6 +71,17 @@ pub fn spawn_slider<'a>(builder: &'a mut ChildBuilder) -> EntityCommands<'a> {
     slider.with_children(spawn_slider_handle);
 
     slider
+}
+
+pub fn change_slider_text(
+    slider_handle_query: Query<&SliderHandle, Changed<SliderHandle>>,
+    mut sliter_text_query: Query<&mut Text, With<SliderText>>,
+) {
+    let slider_handle = slider_handle_query.get_single();
+    if let Ok(slider_handle) = slider_handle {
+        let mut slider_text = sliter_text_query.single_mut();
+        slider_text.0 = slider_handle.value.to_string();
+    }
 }
 
 pub fn change_slider_state(

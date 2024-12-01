@@ -15,7 +15,10 @@ use bevy::color::Color;
 use bevy::prelude::*;
 use buttons::{spawn_action_button, GenerateMazeButton, LoadMazeButton, SaveMazeButton};
 use interactions::{button_hover_change_color, button_state_system};
-use slider::{change_slider_state, change_slider_value, move_slider, spawn_slider};
+use slider::{
+    change_slider_state, change_slider_text, change_slider_value, move_slider, spawn_slider,
+    spawn_slider_text,
+};
 
 pub fn generate_ui(mut commands: Commands) {
     commands
@@ -43,6 +46,7 @@ pub fn generate_ui(mut commands: Commands) {
         })
         .with_children(|builder| {
             spawn_slider(builder);
+            spawn_slider_text(builder);
         });
 }
 
@@ -61,6 +65,7 @@ impl Plugin for UiPlugin {
                 change_slider_state,
                 move_slider,
                 change_slider_value,
+                change_slider_text,
             ),
         );
     }
