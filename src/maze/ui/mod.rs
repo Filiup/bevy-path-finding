@@ -20,6 +20,10 @@ use slider::{spawn_slider, SlidersPlugin};
 #[derive(Component)]
 pub struct ChangeSpeedSlider;
 
+#[derive(Component)]
+
+pub struct RandomSlider;
+
 pub fn generate_ui(mut commands: Commands) {
     commands
         .spawn(Node {
@@ -46,6 +50,9 @@ pub fn generate_ui(mut commands: Commands) {
         })
         .with_children(|builder| {
             spawn_slider(builder, ChangeSpeedSlider);
+        })
+        .with_children(|builder| {
+            spawn_slider(builder, RandomSlider);
         });
 }
 

@@ -131,19 +131,12 @@ pub fn change_sliders_text(
 pub fn change_sliders_state(
     window_query: Query<&Window, With<PrimaryWindow>>,
     mouse_buttons: Res<ButtonInput<MouseButton>>,
-    mut slider_handle_query: Query<(&mut SliderHandle, &Node)>,
-    slider_handle_interraction_query: Query<
-        &Interaction,
-        (Changed<Interaction>, With<SliderHandle>),
-    >,
+    mut slider_handle_query: Query<(&mut SliderHandle, &Node, &Interaction)>,
 ) {
     let primary_window = window_query.single();
 
-    for (mut slider_handle, node) in slider_handle_query.iter_mut() {
-        let pressed = slider_handle_interraction_query
-            .into_iter()
-            .any(|&i| i == Interaction::Pressed);
-
+    for (mut slider_handle, node, interraction) in slider_handle_query.iter_mut() {
+        let pressed = *interraction == Interaction::Pressed;
         let left_click_pressed = mouse_buttons.pressed(MouseButton::Left);
 
         if pressed {
