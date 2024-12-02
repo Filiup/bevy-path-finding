@@ -1,7 +1,9 @@
 use crate::maze::{
     common::cell::MazeCell,
-    constants::generation::{CELL_STACK_COLOR, NEIGHBOR_CELL_COLOR},
-    grid::CELL_COLOR,
+    constants::{
+        generation::{CELL_STACK_COLOR, NEIGHBOR_CELL_COLOR},
+        grid::CELL_COLOR,
+    },
 };
 use bevy::prelude::*;
 
