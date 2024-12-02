@@ -1,3 +1,5 @@
+use crate::maze::constants::ui::{BUTTON_COLOR, BUTTON_HOVER_COLOR};
+
 use super::*;
 use bevy::{prelude::*, state::state::FreelyMutableState};
 
