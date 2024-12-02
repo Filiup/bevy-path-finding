@@ -1,6 +1,8 @@
-use crate::maze::{common::cell::MazeCell, grid::CELL_COLOR};
-
-use super::{CELL_STACK_COLOR, NEIGHBOR_COLOR};
+use crate::maze::{
+    common::cell::MazeCell,
+    constants::generation::{CELL_STACK_COLOR, NEIGHBOR_CELL_COLOR},
+    grid::CELL_COLOR,
+};
 use bevy::prelude::*;
 
 #[derive(Event)]
@@ -28,7 +30,7 @@ pub fn change_stack_color(
 
         for &neighbor_entity in neighbors {
             let mut neighbor_sprite = sprite_query.get_mut(neighbor_entity).unwrap();
-            neighbor_sprite.color = NEIGHBOR_COLOR;
+            neighbor_sprite.color = NEIGHBOR_CELL_COLOR;
         }
     }
 }

@@ -1,11 +1,13 @@
-use crate::maze::{common::cell::MazeCell, grid::MazeCellGrid};
+use crate::maze::{
+    common::cell::MazeCell, constants::generation::DEFAULT_CELL_ITERATION_TIMER_VALUE,
+    grid::MazeCellGrid,
+};
 use std::time::Duration;
 
 use super::{
     color::{ChangeStackColor, ResetStackColor},
     stack::EntityStack,
     walls::DestroyWallsBetween,
-    DEFAULT_CELL_ITERATION_TIMER_VALUE,
 };
 use bevy::prelude::*;
 use rand::prelude::*;
