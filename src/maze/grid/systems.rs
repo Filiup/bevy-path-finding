@@ -4,7 +4,7 @@ use crate::maze::{
         cell::MazeCell,
         wall::{MazeWall, WallDirection},
     },
-    window::{GRID_WINDOW_HEIGHT, GRID_WINDOW_WIDTH},
+    constants::window::{GRID_WINDOW_HEIGHT, GRID_WINDOW_WIDTH},
 };
 use bevy::prelude::*;
 

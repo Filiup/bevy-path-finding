@@ -5,7 +5,7 @@ use bevy::prelude::*;
 use generate::GenerateMenuPlugin;
 use main::MainMenuPlugin;
 
-use crate::maze::window::{UI_WINDOW_HEIGHT, UI_WINDOW_WIDTH};
+use crate::maze::constants::window::{UI_WINDOW_HEIGHT, UI_WINDOW_WIDTH};
 
 pub struct MenuPlugin;
 

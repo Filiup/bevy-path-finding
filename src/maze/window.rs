@@ -1,15 +1,6 @@
+use super::constants::window::*;
 use bevy::prelude::*;
 use bevy::{window::PrimaryWindow, window::WindowResolution};
-
-pub const WINDOW_HEIGHT: f32 = 600.0;
-
-pub const GRID_WINDOW_WIDTH: f32 = 800.0;
-pub const GRID_WINDOW_HEIGHT: f32 = WINDOW_HEIGHT;
-
-pub const UI_WINDOW_WIDTH: f32 = 200.0;
-pub const UI_WINDOW_HEIGHT: f32 = WINDOW_HEIGHT;
-
-pub const WINDOW_WIDTH: f32 = GRID_WINDOW_WIDTH + UI_WINDOW_WIDTH;
 
 pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<PrimaryWindow>>) {
     let primary_window = window_query.get_single().unwrap();
