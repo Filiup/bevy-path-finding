@@ -1,5 +1,5 @@
 use crate::maze::{
-    common::cell::{MazeCell, MazeGenerationTimer},
+    common::{cell::MazeCell, generation::MazeGenerationTimer},
     grid::MazeCellGrid,
 };
 

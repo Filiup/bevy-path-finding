@@ -2,7 +2,7 @@ mod maze;
 
 use bevy::app::App;
 use bevy::prelude::AppExtStates;
-use maze::common::cell::MazeGenerationTimer;
+use maze::common::generation::MazeGenerationTimer;
 use maze::generation::MazeGenerationPlugin;
 use maze::grid::MazeGridPlugin;
 use maze::states::MazeState;
