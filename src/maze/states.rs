@@ -1,13 +1,21 @@
 use bevy::prelude::States;
 
-#[derive(States, Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
+#[derive(States, Debug, Clone, Copy, Eq, PartialEq, Hash)]
+
 pub enum MazeState {
-    #[default]
-    MainMenu,
-    Generation,
+    MainMenu(MenuState),
+    MazeGeneration,
 }
 
+#[derive(States, Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
+pub enum MenuState {
+    #[default]
+    WithoutMaze,
+    WithMaze,
+}
 
-
-
-
+impl Default for MazeState {
+    fn default() -> Self {
+        Self::MainMenu(MenuState::default())
+    }
+}

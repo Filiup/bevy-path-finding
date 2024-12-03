@@ -51,11 +51,14 @@ pub fn change_generation_timer(
 
 impl Plugin for GenerateMenuPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(MazeState::Generation), build_generate_menu)
-            .add_systems(OnExit(MazeState::Generation), despawn_menu::<GenerateMenu>)
+        app.add_systems(OnEnter(MazeState::MazeGeneration), build_generate_menu)
+            .add_systems(
+                OnExit(MazeState::MazeGeneration),
+                despawn_menu::<GenerateMenu>,
+            )
             .add_systems(
                 Update,
-                change_generation_timer.run_if(in_state(MazeState::Generation)),
+                change_generation_timer.run_if(in_state(MazeState::MazeGeneration)),
             );
     }
 }

@@ -12,6 +12,10 @@ impl EntityStack {
     pub fn pop(&mut self) -> Option<Entity> {
         self.0.pop()
     }
+
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
 }
 
 pub(crate) fn stack_add_first_mazecell(
