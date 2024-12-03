@@ -4,7 +4,7 @@ mod stack;
 mod walls;
 
 use bevy::prelude::*;
-use cell::{iterate_cells, CellIterationTimer};
+use cell::iterate_cells;
 
 use color::{change_stack_color, reset_stack_color, ChangeStackColor, ResetStackColor};
 use stack::{stack_add_first_mazecell, EntityStack};
@@ -17,7 +17,6 @@ pub struct MazeGenerationPlugin;
 impl Plugin for MazeGenerationPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<EntityStack>()
-            .init_resource::<CellIterationTimer>()
             .add_event::<DestroyWallsBetween>()
             .add_event::<ChangeStackColor>()
             .add_event::<ResetStackColor>()

@@ -1,8 +1,7 @@
 use crate::maze::{
-    common::cell::MazeCell, constants::generation::DEFAULT_CELL_ITERATION_TIMER_VALUE,
+    common::cell::{CellIterationTimer, MazeCell},
     grid::MazeCellGrid,
 };
-use std::time::Duration;
 
 use super::{
     color::{ChangeStackColor, ResetStackColor},
@@ -11,22 +10,6 @@ use super::{
 };
 use bevy::prelude::*;
 use rand::prelude::*;
-
-#[derive(Resource)]
-pub struct CellIterationTimer {
-    pub timer: Timer,
-}
-
-impl Default for CellIterationTimer {
-    fn default() -> Self {
-        CellIterationTimer {
-            timer: Timer::new(
-                Duration::from_millis(DEFAULT_CELL_ITERATION_TIMER_VALUE),
-                TimerMode::Repeating,
-            ),
-        }
-    }
-}
 
 fn find_neighbors(maze_cell: &MazeCell, cell_grid: &MazeCellGrid) -> impl Iterator<Item = Entity> {
     let find_neighbor = |row, col| cell_grid.get(row?, col?);
