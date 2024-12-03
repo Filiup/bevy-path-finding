@@ -1,22 +1,12 @@
-use crate::maze::{
-    common::states::{MazeState, MenuState},
-    ui::buttons::{builders::spawn_action_button, interactions::button_state_system},
-};
+use super::*;
+use crate::maze::common::states::{MazeState, MenuState};
 use bevy::prelude::*;
 
-use super::*;
-
 #[derive(Component)]
-pub struct MainMenu;
-
-#[derive(Component)]
-pub struct GenerateMazeButton;
-
-#[derive(Component)]
-pub struct LoadMazeButton;
+pub struct WithoutMazeMenu;
 
 pub fn build_main_menu(mut commands: Commands) {
-    spawn_ui_container(&mut commands, MainMenu)
+    spawn_ui_container(&mut commands, WithoutMazeMenu)
         .with_children(|builder| {
             spawn_action_button(builder, GenerateMazeButton, "Generate maze");
         })
@@ -25,9 +15,9 @@ pub fn build_main_menu(mut commands: Commands) {
         });
 }
 
-pub(crate) struct MainMenuPlugin;
+pub(crate) struct WithoutMazeMenuPlugin;
 
-impl Plugin for MainMenuPlugin {
+impl Plugin for WithoutMazeMenuPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             OnEnter(MazeState::MainMenu(MenuState::WithoutMaze)),
@@ -35,7 +25,7 @@ impl Plugin for MainMenuPlugin {
         )
         .add_systems(
             OnExit(MazeState::MainMenu(MenuState::WithoutMaze)),
-            despawn_menu::<MainMenu>,
+            despawn_menu::<WithoutMazeMenu>,
         )
         .add_systems(
             Update,
