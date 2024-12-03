@@ -1,5 +1,5 @@
 use crate::maze::{
-    states::{MazeState, MenuState},
+    common::states::{MazeState, MenuState},
     ui::buttons::{builders::spawn_action_button, interactions::button_state_system},
 };
 use bevy::prelude::*;

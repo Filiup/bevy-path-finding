@@ -10,7 +10,7 @@ use color::{change_stack_color, reset_stack_color, ChangeStackColor, ResetStackC
 use stack::{stack_add_first_mazecell, EntityStack};
 use walls::{destroy_walls, DestroyWallsBetween};
 
-use super::states::{MazeState, MenuState};
+use super::common::states::{MazeState, MenuState};
 
 pub struct MazeGenerationPlugin;
 

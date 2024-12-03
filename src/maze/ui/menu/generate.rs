@@ -3,9 +3,8 @@ use std::time::Duration;
 use bevy::prelude::*;
 
 use crate::maze::{
-    common::generation::MazeGenerationTimer,
+    common::{generation::MazeGenerationTimer, states::MazeState},
     constants::generation::DEFAULT_MAZE_GENERATION_TIMER_VALUE,
-    states::MazeState,
     ui::sliders::{builders::spawn_slider, SliderDirection, SliderHandle},
 };
 

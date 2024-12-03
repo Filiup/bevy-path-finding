@@ -3,9 +3,9 @@ mod maze;
 use bevy::app::App;
 use bevy::prelude::AppExtStates;
 use maze::common::generation::MazeGenerationTimer;
+use maze::common::states::MazeState;
 use maze::generation::MazeGenerationPlugin;
 use maze::grid::MazeGridPlugin;
-use maze::states::MazeState;
 use maze::ui::UiPlugin;
 use maze::window::MazeWindowPlugin;
 
