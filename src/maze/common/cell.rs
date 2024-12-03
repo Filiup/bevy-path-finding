@@ -15,13 +15,13 @@ pub struct MazeCell {
 }
 
 #[derive(Resource)]
-pub struct CellIterationTimer {
+pub struct MazeGenerationTimer {
     pub timer: Timer,
 }
 
-impl Default for CellIterationTimer {
+impl Default for MazeGenerationTimer {
     fn default() -> Self {
-        CellIterationTimer {
+        MazeGenerationTimer {
             timer: Timer::new(
                 Duration::from_millis(DEFAULT_CELL_ITERATION_TIMER_VALUE),
                 TimerMode::Repeating,

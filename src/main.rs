@@ -2,7 +2,7 @@ mod maze;
 
 use bevy::app::App;
 use bevy::prelude::AppExtStates;
-use maze::common::cell::CellIterationTimer;
+use maze::common::cell::MazeGenerationTimer;
 use maze::generation::MazeGenerationPlugin;
 use maze::grid::MazeGridPlugin;
 use maze::states::MazeState;
@@ -13,7 +13,7 @@ fn main() {
     App::new()
         .add_plugins(MazeWindowPlugin)
         .init_state::<MazeState>()
-        .init_resource::<CellIterationTimer>()
+        .init_resource::<MazeGenerationTimer>()
         .add_plugins(MazeGridPlugin)
         .add_plugins(MazeGenerationPlugin)
         .add_plugins(UiPlugin)

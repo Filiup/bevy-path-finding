@@ -3,7 +3,7 @@ use std::time::Duration;
 use bevy::prelude::*;
 
 use crate::maze::{
-    common::cell::CellIterationTimer,
+    common::cell::MazeGenerationTimer,
     constants::generation::DEFAULT_CELL_ITERATION_TIMER_VALUE,
     states::MazeState,
     ui::sliders::{builders::spawn_slider, SliderDirection, SliderHandle},
@@ -35,7 +35,7 @@ pub fn build_generate_menu(mut commands: Commands) {
 }
 
 pub fn change_generation_timer(
-    mut cell_timer: ResMut<CellIterationTimer>,
+    mut cell_timer: ResMut<MazeGenerationTimer>,
     slider_handle_query: Query<&SliderHandle, (With<GenerationSpeedSlider>, Changed<SliderHandle>)>,
 ) {
     let slider_handle = slider_handle_query.get_single();

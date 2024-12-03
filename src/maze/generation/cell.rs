@@ -1,5 +1,5 @@
 use crate::maze::{
-    common::cell::{CellIterationTimer, MazeCell},
+    common::cell::{MazeCell, MazeGenerationTimer},
     grid::MazeCellGrid,
 };
 
@@ -30,7 +30,7 @@ pub fn iterate_cells(
     cell_grid: Res<MazeCellGrid>,
     time: Res<Time>,
     mut cell_stack: ResMut<EntityStack>,
-    mut cell_iteration_timer: ResMut<CellIterationTimer>,
+    mut cell_iteration_timer: ResMut<MazeGenerationTimer>,
 
     mut destroy_walls_writer: EventWriter<DestroyWallsBetween>,
     mut change_color_writer: EventWriter<ChangeStackColor>,
