@@ -15,9 +15,9 @@ pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<Pr
     ));
 }
 
-pub struct MazeWindowPlugin;
+pub struct MazeDefaultPlugin;
 
-impl Plugin for MazeWindowPlugin {
+impl Plugin for MazeDefaultPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {

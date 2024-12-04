@@ -7,11 +7,11 @@ use maze::common::states::MazeState;
 use maze::generation::MazeGenerationPlugin;
 use maze::grid::MazeGridPlugin;
 use maze::ui::UiPlugin;
-use maze::window::MazeWindowPlugin;
+use maze::default::MazeDefaultPlugin;
 
 fn main() {
     App::new()
-        .add_plugins(MazeWindowPlugin)
+        .add_plugins(MazeDefaultPlugin)
         .init_state::<MazeState>()
         .init_resource::<MazeGenerationTimer>()
         .add_plugins(MazeGridPlugin)
