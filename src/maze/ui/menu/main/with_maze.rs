@@ -1,4 +1,7 @@
-use crate::maze::common::states::{MazeState, MenuState};
+use crate::maze::{
+    common::states::{MazeState, MenuState},
+    storage::SaveMazeEvent,
+};
 
 use super::*;
 use bevy::prelude::*;
@@ -12,6 +15,21 @@ pub fn build_main_menu(mut commands: Commands) {
     });
 }
 
+pub fn save_maze(
+    button_interaction_query: Query<&Interaction, (Changed<Interaction>, With<SaveMazeButton>)>,
+    mut save_maze_writer: EventWriter<SaveMazeEvent>,
+) {
+    let is_pressed = button_interaction_query
+        .iter()
+        .any(|&i| i == Interaction::Pressed);
+
+    if !is_pressed {
+        return;
+    };
+
+    save_maze_writer.send(SaveMazeEvent);
+}
+
 pub struct WithMazeMenuPlugin;
 
 impl Plugin for WithMazeMenuPlugin {
@@ -23,6 +41,7 @@ impl Plugin for WithMazeMenuPlugin {
         .add_systems(
             OnExit(MazeState::MainMenu(MenuState::WithMaze)),
             despawn_menu::<WithMazeMenu>,
-        );
+        )
+        .add_systems(Update, save_maze);
     }
 }

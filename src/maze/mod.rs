@@ -4,3 +4,4 @@ pub mod generation;
 pub mod grid;
 pub mod ui;
 pub mod default;
+pub mod storage;
