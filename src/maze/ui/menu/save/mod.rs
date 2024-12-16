@@ -1,9 +1,14 @@
+use std::path::Path;
+
 use bevy::prelude::*;
 
 use super::{despawn_menu, main::spawn_button, spawn_ui_container};
 use crate::maze::{
-    common::states::MazeState,
-    constants::ui::{SAVE_MAZE_BUTTON_COLOR, SAVE_SLOT_BUTTON_HEIGHT, SAVE_SLOT_BUTTON_WIDTH},
+    common::states::{MazeState, MenuState},
+    constants::ui::{
+        NOT_EMPTY_SAVE_SLOT_BUTTON_COLOR, SAVE_SLOT_BUTTON_COLOR, SAVE_SLOT_BUTTON_HEIGHT,
+        SAVE_SLOT_BUTTON_WIDTH,
+    },
     storage::SaveMazeEvent,
 };
 
@@ -15,17 +20,19 @@ pub struct SaveSlotButton;
 
 #[derive(Component, Clone, Copy)]
 pub struct SaveSlot {
-    slot: usize,
+    pub slot: usize,
+    pub empty: bool,
 }
 
 impl SaveSlot {
-    pub fn new(order: usize) -> SaveSlot {
-        SaveSlot { slot: order }
+    pub fn new(slot: usize, empty: bool) -> SaveSlot {
+        SaveSlot { slot, empty }
     }
 }
 
 pub fn save_maze(
     maze_slot_interraction_query: Query<(&Interaction, &SaveSlot), Changed<Interaction>>,
+    mut maze_next_state: ResMut<NextState<MazeState>>,
     mut save_maze_writer: EventWriter<SaveMazeEvent>,
 ) {
     let pressed_slot = maze_slot_interraction_query
@@ -36,6 +43,7 @@ pub fn save_maze(
         save_maze_writer.send(SaveMazeEvent {
             slot: save_slot.slot,
         });
+        maze_next_state.set(MazeState::MainMenu(MenuState::WithMaze));
     }
 }
 
@@ -56,13 +64,19 @@ fn spawn_save_slot_button<'a>(
     builder: &'a mut ChildBuilder,
     save_slot: SaveSlot,
 ) -> EntityCommands<'a> {
+    let color = if save_slot.empty {
+        SAVE_SLOT_BUTTON_COLOR
+    } else {
+        NOT_EMPTY_SAVE_SLOT_BUTTON_COLOR
+    };
+
     spawn_button(
         builder,
         SaveSlotButton,
         save_slot,
         SAVE_SLOT_BUTTON_WIDTH,
         SAVE_SLOT_BUTTON_HEIGHT,
-        SAVE_MAZE_BUTTON_COLOR,
+        color,
         &save_slot.slot.to_string(),
     )
 }
@@ -81,7 +95,14 @@ pub fn build_menu(mut commands: Commands) {
         .with_children(|builder| {
             spawn_save_container(builder).with_children(|builder| {
                 for order in 1..11 {
-                    spawn_save_slot_button(builder, SaveSlot::new(order));
+                    let save_path = format!("saves/save_{}.mz", order);
+                    let save_slot = if Path::new(&save_path).exists() {
+                        SaveSlot::new(order, false)
+                    } else {
+                        SaveSlot::new(order, true)
+                    };
+
+                    spawn_save_slot_button(builder, save_slot);
                 }
             });
         });
