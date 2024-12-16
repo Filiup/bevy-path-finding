@@ -1,9 +1,11 @@
 pub mod generate;
+pub mod load;
 pub mod main;
 pub mod save;
 
 use bevy::prelude::*;
 use generate::GenerateMenuPlugin;
+use load::LoadMenuPlugin;
 use main::MainMenuPlugin;
 use save::SaveMenuPlugin;
 
@@ -41,6 +43,19 @@ pub fn spawn_ui_container<'a>(
         },
         menu_marker_component,
     ));
+
+    container
+}
+
+fn spawn_slot_container<'a>(builder: &'a mut ChildBuilder) -> EntityCommands<'a> {
+    let container = builder.spawn(Node {
+        display: Display::Grid,
+        grid_template_columns: RepeatedGridTrack::flex(5, 1.0),
+        grid_template_rows: RepeatedGridTrack::flex(2, 1.0),
+        row_gap: Val::Px(10.0),
+        column_gap: Val::Px(10.0),
+        ..default()
+    });
 
     container
 }
@@ -84,6 +99,7 @@ impl Plugin for MenuPlugin {
         app.add_systems(Update, change_action_button_color)
             .add_plugins(MainMenuPlugin)
             .add_plugins(GenerateMenuPlugin)
-            .add_plugins(SaveMenuPlugin);
+            .add_plugins(SaveMenuPlugin)
+            .add_plugins(LoadMenuPlugin);
     }
 }

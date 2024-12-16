@@ -2,7 +2,7 @@ use std::path::Path;
 
 use bevy::prelude::*;
 
-use super::{despawn_menu, main::spawn_button, spawn_ui_container};
+use super::{despawn_menu, main::spawn_button, spawn_slot_container, spawn_ui_container};
 use crate::maze::{
     common::states::{MazeState, MenuState},
     constants::ui::{
@@ -47,19 +47,6 @@ pub fn save_maze(
     }
 }
 
-fn spawn_save_container<'a>(builder: &'a mut ChildBuilder) -> EntityCommands<'a> {
-    let container = builder.spawn(Node {
-        display: Display::Grid,
-        grid_template_columns: RepeatedGridTrack::flex(5, 1.0),
-        grid_template_rows: RepeatedGridTrack::flex(2, 1.0),
-        row_gap: Val::Px(10.0),
-        column_gap: Val::Px(10.0),
-        ..default()
-    });
-
-    container
-}
-
 fn spawn_save_slot_button<'a>(
     builder: &'a mut ChildBuilder,
     save_slot: SaveSlot,
@@ -90,7 +77,7 @@ pub fn build_menu(mut commands: Commands) {
             ));
         })
         .with_children(|builder| {
-            spawn_save_container(builder).with_children(|builder| {
+            spawn_slot_container(builder).with_children(|builder| {
                 for order in 1..11 {
                     let save_path = format!("saves/save_{}.mz", order);
                     let save_slot = if Path::new(&save_path).exists() {
