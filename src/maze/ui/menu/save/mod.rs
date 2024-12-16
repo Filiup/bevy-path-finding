@@ -85,10 +85,7 @@ pub fn build_menu(mut commands: Commands) {
     spawn_ui_container(&mut commands, SaveMenu)
         .with_children(|builder| {
             builder.spawn((
-                Node {
-                    justify_content: JustifyContent::Center,
-                    ..default()
-                },
+                TextLayout::new_with_justify(JustifyText::Center),
                 Text::new("Select save location"),
             ));
         })
