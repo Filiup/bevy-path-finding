@@ -29,9 +29,12 @@ impl Plugin for WithoutMazeMenuPlugin {
         )
         .add_systems(
             Update,
-            button_state_system::<GenerateMazeButton, _>(
-                MazeState::MazeGeneration,
-                Interaction::Pressed,
+            (
+                button_state_system::<GenerateMazeButton, _>(
+                    MazeState::MazeGeneration,
+                    Interaction::Pressed,
+                ),
+                button_state_system::<LoadMazeButton, _>(MazeState::MazeLoad, Interaction::Pressed),
             ),
         );
     }

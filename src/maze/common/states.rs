@@ -6,6 +6,7 @@ pub enum MazeState {
     MainMenu(MenuState),
     MazeGeneration,
     MazeSave,
+    MazeLoad,
 }
 
 #[derive(States, Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
