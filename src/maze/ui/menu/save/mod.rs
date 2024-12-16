@@ -79,7 +79,6 @@ fn spawn_save_maze_button<'a>(
 }
 
 pub fn build_menu(mut commands: Commands) {
-    println!("Here !");
     spawn_ui_container(&mut commands, SaveMenu)
         .with_children(|builder| {
             builder.spawn((

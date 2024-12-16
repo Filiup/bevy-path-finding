@@ -12,21 +12,6 @@ pub fn build_main_menu(mut commands: Commands) {
     });
 }
 
-pub fn save_maze(
-    button_interaction_query: Query<&Interaction, (Changed<Interaction>, With<SaveMazeButton>)>,
-    mut next_state: ResMut<NextState<MazeState>>,
-) {
-    let is_pressed = button_interaction_query
-        .iter()
-        .any(|&i| i == Interaction::Pressed);
-
-    if !is_pressed {
-        return;
-    };
-
-    next_state.set(MazeState::MazeSave);
-}
-
 pub struct WithMazeMenuPlugin;
 
 impl Plugin for WithMazeMenuPlugin {
@@ -39,6 +24,9 @@ impl Plugin for WithMazeMenuPlugin {
             OnExit(MazeState::MainMenu(MenuState::WithMaze)),
             despawn_menu::<WithMazeMenu>,
         )
-        .add_systems(Update, save_maze);
+        .add_systems(
+            Update,
+            button_state_system::<SaveMazeButton, _>(MazeState::MazeSave, Interaction::Pressed),
+        );
     }
 }
