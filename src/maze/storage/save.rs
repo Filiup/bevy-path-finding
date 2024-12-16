@@ -1,4 +1,4 @@
-use std::{collections::HashSet, fmt};
+use std::{collections::HashSet, fmt, fs::File, io::Write};
 
 use crate::maze::{
     common::{
@@ -10,7 +10,9 @@ use crate::maze::{
 use bevy::{prelude::*, utils::HashMap};
 
 #[derive(Event)]
-pub struct SaveMazeEvent;
+pub struct SaveMazeEvent {
+    pub slot: usize,
+}
 
 struct MazeWriter(HashMap<(usize, usize), HashSet<WallDirection>>);
 
@@ -25,7 +27,10 @@ impl fmt::Display for MazeWriter {
     }
 }
 
-fn write_maze(writer: MazeWriter) {
+fn write_maze(writer: MazeWriter, slot: usize) {
+    let mut file = File::create(format!("saves/save_{}.mz", slot)).unwrap();
+
+    let _ = file.write_all(writer.to_string().as_bytes());
     println!("{}", writer);
 }
 
@@ -42,7 +47,7 @@ pub fn save_maze(
         WallDirection::Bottom,
     ]);
 
-    for _ in event_reader.read() {
+    for event in event_reader.read() {
         let missing_walls = maze_cell_grid
             .iter()
             .map(|(position, &entity)| (*position, maze_cell_children_query.get(entity).unwrap()))
@@ -66,6 +71,6 @@ pub fn save_maze(
             .collect::<HashMap<_, _>>();
 
         let writer = MazeWriter(missing_walls);
-        write_maze(writer);
+        write_maze(writer, event.slot);
     }
 }

@@ -5,6 +5,7 @@ use bevy::prelude::States;
 pub enum MazeState {
     MainMenu(MenuState),
     MazeGeneration,
+    MazeSave,
 }
 
 #[derive(States, Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]

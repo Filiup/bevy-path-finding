@@ -1,9 +1,11 @@
 pub mod generate;
 pub mod main;
+pub mod save;
 
 use bevy::prelude::*;
 use generate::GenerateMenuPlugin;
 use main::MainMenuPlugin;
+use save::SaveMenuPlugin;
 
 use crate::maze::constants::window::{UI_WINDOW_HEIGHT, UI_WINDOW_WIDTH};
 
@@ -42,6 +44,7 @@ pub fn despawn_menu<T: Component>(to_despawn: Query<Entity, With<T>>, mut comman
 impl Plugin for MenuPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.add_plugins(MainMenuPlugin)
-            .add_plugins(GenerateMenuPlugin);
+            .add_plugins(GenerateMenuPlugin)
+            .add_plugins(SaveMenuPlugin);
     }
 }
