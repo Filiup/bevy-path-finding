@@ -8,7 +8,9 @@ use main::MainMenuPlugin;
 use save::SaveMenuPlugin;
 
 use crate::maze::constants::{
-    ui::{ACTION_BUTTON_COLOR, ACTION_BUTTON_HOVER_COLOR},
+    ui::{
+        ACTION_BUTTON_COLOR, ACTION_BUTTON_HEIGHT, ACTION_BUTTON_HOVER_COLOR, ACTION_BUTTON_WIDTH,
+    },
     window::{UI_WINDOW_HEIGHT, UI_WINDOW_WIDTH},
 };
 
@@ -54,15 +56,12 @@ pub fn spawn_action_button<'a>(
     component: impl Component,
     text: &str,
 ) -> EntityCommands<'a> {
-    let action_button_width = Val::Px(180.0);
-    let action_button_height = Val::Px(50.0);
-
     spawn_button(
         builder,
         ActionButton,
         component,
-        action_button_width,
-        action_button_height,
+        ACTION_BUTTON_WIDTH,
+        ACTION_BUTTON_HEIGHT,
         ACTION_BUTTON_COLOR,
         text,
     )

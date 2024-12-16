@@ -1,9 +1,12 @@
 use bevy::prelude::*;
 
 use super::{despawn_menu, main::spawn_button, spawn_ui_container};
-use crate::maze::{common::states::MazeState, storage::SaveMazeEvent};
+use crate::maze::{
+    common::states::MazeState,
+    constants::ui::{SAVE_MAZE_BUTTON_COLOR, SAVE_SLOT_BUTTON_HEIGHT, SAVE_SLOT_BUTTON_WIDTH},
+    storage::SaveMazeEvent,
+};
 
-pub const SAVE_MAZE_BUTTON_COLOR: Color = Color::srgb(128.0 / 255.0, 128.0 / 255.0, 128.0 / 255.0);
 #[derive(Component)]
 pub struct SaveMenu;
 
@@ -53,14 +56,12 @@ fn spawn_save_slot_button<'a>(
     builder: &'a mut ChildBuilder,
     save_slot: SaveSlot,
 ) -> EntityCommands<'a> {
-    let save_button_width = Val::Px(30.0);
-    let save_button_height = Val::Px(30.0);
     spawn_button(
         builder,
         SaveSlotButton,
         save_slot,
-        save_button_width,
-        save_button_height,
+        SAVE_SLOT_BUTTON_WIDTH,
+        SAVE_SLOT_BUTTON_HEIGHT,
         SAVE_MAZE_BUTTON_COLOR,
         &save_slot.slot.to_string(),
     )
