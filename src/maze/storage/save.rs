@@ -1,4 +1,10 @@
-use std::{collections::HashSet, fmt, fs::File, io::Write};
+use std::{
+    collections::HashSet,
+    fmt,
+    fs::{self, File},
+    io::Write,
+    path::Path,
+};
 
 use crate::maze::{
     common::{
@@ -28,10 +34,17 @@ impl fmt::Display for MazeWriter {
 }
 
 fn write_maze(writer: MazeWriter, slot: usize) {
-    let mut file = File::create(format!("saves/save_{}.mz", slot)).unwrap();
+    let save = format!("saves/save_{}.mz", slot);
+    let save_path = Path::new(&save);
+    let save_dir_path = save_path.parent().unwrap();
+
+    if !save_dir_path.exists() {
+        fs::create_dir_all(save_dir_path).unwrap();
+    }
+
+    let mut file = File::create(save_path).unwrap();
 
     let _ = file.write_all(writer.to_string().as_bytes());
-    println!("{}", writer);
 }
 
 pub fn save_maze(
