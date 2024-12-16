@@ -1,11 +1,14 @@
 use bevy::prelude::*;
 
-use super::{despawn_menu, spawn_ui_container};
+use super::{despawn_menu, main::spawn_button, spawn_ui_container};
 use crate::maze::{common::states::MazeState, storage::SaveMazeEvent};
 
 pub const SAVE_MAZE_BUTTON_COLOR: Color = Color::srgb(128.0 / 255.0, 128.0 / 255.0, 128.0 / 255.0);
 #[derive(Component)]
 pub struct SaveMenu;
+
+#[derive(Component)]
+pub struct SaveSlotButton;
 
 #[derive(Component, Clone, Copy)]
 pub struct SaveSlot {
@@ -46,36 +49,21 @@ fn spawn_save_container<'a>(builder: &'a mut ChildBuilder) -> EntityCommands<'a>
     container
 }
 
-fn spawn_save_maze_button<'a>(
+fn spawn_save_slot_button<'a>(
     builder: &'a mut ChildBuilder,
     save_slot: SaveSlot,
 ) -> EntityCommands<'a> {
-    let button_text = |builder: &mut ChildBuilder| {
-        builder.spawn((
-            Node {
-                justify_content: JustifyContent::Center,
-                ..default()
-            },
-            Text::new(save_slot.slot.to_string()),
-        ));
-    };
-
-    let mut save_button = builder.spawn((
-        BackgroundColor(SAVE_MAZE_BUTTON_COLOR),
-        Node {
-            width: Val::Px(30.0),
-            height: Val::Px(30.0),
-            justify_content: JustifyContent::Center,
-            align_items: AlignItems::Center,
-            ..default()
-        },
-        Button,
+    let save_button_width = Val::Px(30.0);
+    let save_button_height = Val::Px(30.0);
+    spawn_button(
+        builder,
+        SaveSlotButton,
         save_slot,
-    ));
-
-    save_button.with_children(button_text);
-
-    save_button
+        save_button_width,
+        save_button_height,
+        SAVE_MAZE_BUTTON_COLOR,
+        &save_slot.slot.to_string(),
+    )
 }
 
 pub fn build_menu(mut commands: Commands) {
@@ -92,7 +80,7 @@ pub fn build_menu(mut commands: Commands) {
         .with_children(|builder| {
             spawn_save_container(builder).with_children(|builder| {
                 for order in 1..11 {
-                    spawn_save_maze_button(builder, SaveSlot::new(order));
+                    spawn_save_slot_button(builder, SaveSlot::new(order));
                 }
             });
         });
