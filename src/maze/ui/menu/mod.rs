@@ -7,7 +7,15 @@ use generate::GenerateMenuPlugin;
 use main::MainMenuPlugin;
 use save::SaveMenuPlugin;
 
-use crate::maze::constants::window::{UI_WINDOW_HEIGHT, UI_WINDOW_WIDTH};
+use crate::maze::constants::{
+    ui::{ACTION_BUTTON_COLOR, ACTION_BUTTON_HOVER_COLOR},
+    window::{UI_WINDOW_HEIGHT, UI_WINDOW_WIDTH},
+};
+
+use super::buttons::builders::spawn_button;
+
+#[derive(Component)]
+pub struct ActionButton;
 
 pub struct MenuPlugin;
 
@@ -41,9 +49,41 @@ pub fn despawn_menu<T: Component>(to_despawn: Query<Entity, With<T>>, mut comman
     }
 }
 
+pub fn spawn_action_button<'a>(
+    builder: &'a mut ChildBuilder,
+    component: impl Component,
+    text: &str,
+) -> EntityCommands<'a> {
+    let action_button_width = Val::Px(180.0);
+    let action_button_height = Val::Px(50.0);
+
+    spawn_button(
+        builder,
+        ActionButton,
+        component,
+        action_button_width,
+        action_button_height,
+        ACTION_BUTTON_COLOR,
+        text,
+    )
+}
+
+pub(crate) fn change_action_button_color(
+    mut buttons_color_query: Query<(&Interaction, &mut BackgroundColor), With<ActionButton>>,
+) {
+    for (interaction, mut color) in buttons_color_query.iter_mut() {
+        match &interaction {
+            Interaction::Hovered => *color = ACTION_BUTTON_HOVER_COLOR.into(),
+            Interaction::None => *color = ACTION_BUTTON_COLOR.into(),
+            _ => (),
+        }
+    }
+}
+
 impl Plugin for MenuPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_plugins(MainMenuPlugin)
+        app.add_systems(Update, change_action_button_color)
+            .add_plugins(MainMenuPlugin)
             .add_plugins(GenerateMenuPlugin)
             .add_plugins(SaveMenuPlugin);
     }

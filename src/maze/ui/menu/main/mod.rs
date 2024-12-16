@@ -5,7 +5,6 @@ use with_maze::WithMazeMenuPlugin;
 use without_maze::WithoutMazeMenuPlugin;
 
 pub(crate) use super::*;
-pub(crate) use crate::maze::ui::buttons::builders::spawn_action_button;
 pub(crate) use crate::maze::ui::buttons::interactions::button_state_system;
 
 #[derive(Component)]

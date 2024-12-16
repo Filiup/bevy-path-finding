@@ -1,11 +1,12 @@
-use crate::maze::constants::ui::BUTTON_COLOR;
-
-use super::*;
 use bevy::prelude::*;
 
-pub fn spawn_action_button<'a>(
+pub fn spawn_button<'a>(
     builder: &'a mut ChildBuilder,
-    component: impl Component,
+    kind_component: impl Component,
+    id_component: impl Component,
+    width: Val,
+    height: Val,
+    color: Color,
     text: &str,
 ) -> EntityCommands<'a> {
     let button_text = |builder: &mut ChildBuilder| {
@@ -19,17 +20,17 @@ pub fn spawn_action_button<'a>(
     };
 
     let mut button = builder.spawn((
-        BackgroundColor(BUTTON_COLOR),
+        BackgroundColor(color),
         Node {
-            width: Val::Px(180.0),
-            height: Val::Px(50.0),
+            width,
+            height,
             justify_content: JustifyContent::Center,
             align_items: AlignItems::Center,
             ..default()
         },
         Button,
-        ActionButton,
-        component,
+        id_component,
+        kind_component,
     ));
 
     button.with_children(button_text);

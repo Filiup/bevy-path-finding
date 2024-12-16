@@ -1,6 +1,3 @@
-use crate::maze::constants::ui::{BUTTON_COLOR, BUTTON_HOVER_COLOR};
-
-use super::*;
 use bevy::{prelude::*, state::state::FreelyMutableState};
 
 #[allow(clippy::type_complexity)]
@@ -18,18 +15,6 @@ where
             if *interaction == interaction_type {
                 next_state_res.set(next_state);
             }
-        }
-    }
-}
-
-pub(crate) fn buttons_hover_changle_color(
-    mut buttons_color_query: Query<(&Interaction, &mut BackgroundColor), With<ActionButton>>,
-) {
-    for (interaction, mut color) in buttons_color_query.iter_mut() {
-        match &interaction {
-            Interaction::Hovered => *color = BUTTON_HOVER_COLOR.into(),
-            Interaction::None => *color = BUTTON_COLOR.into(),
-            _ => (),
         }
     }
 }
