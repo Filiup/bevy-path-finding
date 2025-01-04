@@ -1,5 +1,5 @@
 use bevy::prelude::Component;
-use std::fmt;
+use std::{fmt, str::FromStr};
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)]
 pub enum WallDirection {
@@ -16,6 +16,19 @@ impl fmt::Display for WallDirection {
             Self::Bottom => write!(f, "B"),
             Self::Left => write!(f, "L"),
             Self::Right => write!(f, "R"),
+        }
+    }
+}
+
+impl FromStr for WallDirection {
+    type Err = String;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "T" => Ok(Self::Top),
+            "B" => Ok(Self::Bottom),
+            "L" => Ok(Self::Left),
+            "R" => Ok(Self::Right),
+            _ => Err(format!("'{}' is not a valid enum variant", s)),
         }
     }
 }

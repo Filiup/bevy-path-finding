@@ -1,6 +1,5 @@
 use std::{
     collections::HashSet,
-    fmt,
     fs::{self, File},
     io::Write,
     path::Path,
@@ -15,25 +14,14 @@ use crate::maze::{
 };
 use bevy::{prelude::*, utils::HashMap};
 
+use super::*;
+
 #[derive(Event)]
 pub struct SaveMazeEvent {
     pub slot: usize,
 }
 
-struct MazeWriter(HashMap<(usize, usize), HashSet<WallDirection>>);
-
-impl fmt::Display for MazeWriter {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        for ((row, col), directions) in &self.0 {
-            let directions_str = directions.iter().map(|v| v.to_string()).collect::<String>();
-
-            write!(f, "{}{}{};", row, col, directions_str)?;
-        }
-        Ok(())
-    }
-}
-
-fn write_maze(writer: MazeWriter, slot: usize) {
+fn write_maze(writer: MazeStorage, slot: usize) {
     let save = format!("saves/save_{}.mz", slot);
     let save_path = Path::new(&save);
     let save_dir_path = save_path.parent().unwrap();
@@ -83,7 +71,7 @@ pub fn save_maze(
             })
             .collect::<HashMap<_, _>>();
 
-        let writer = MazeWriter(missing_walls);
+        let writer = MazeStorage(missing_walls);
         write_maze(writer, event.slot);
     }
 }
