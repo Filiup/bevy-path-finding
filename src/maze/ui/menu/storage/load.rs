@@ -2,7 +2,11 @@ use super::*;
 use std::path::Path;
 
 use crate::maze::{
-    common::{cell::MazeCell, states::MazeState, wall::MazeWall},
+    common::{
+        cell::MazeCell,
+        states::{MazeState, MenuState},
+        wall::MazeWall,
+    },
     grid::MazeCellGrid,
     storage::read_maze,
 };
@@ -37,13 +41,15 @@ pub fn build_menu(mut commands: Commands) {
 #[allow(clippy::type_complexity)]
 pub fn load_maze(
     mut commands: Commands,
+    cell_grid: Res<MazeCellGrid>,
+    mut maze_state: ResMut<NextState<MazeState>>,
+
     maze_cell_children_query: Query<&Children, With<MazeCell>>,
     maze_wall_query: Query<&MazeWall>,
     storage_slot_interraction: Query<
         (&Interaction, &StorageSlot),
         (Changed<Interaction>, With<LoadSlotButton>),
     >,
-    cell_grid: Res<MazeCellGrid>,
 ) {
     let pressed_slot = storage_slot_interraction
         .iter()
@@ -70,6 +76,8 @@ pub fn load_maze(
                 }
             }
         }
+
+        maze_state.set(MazeState::MainMenu(MenuState::WithMaze));
     }
 }
 
