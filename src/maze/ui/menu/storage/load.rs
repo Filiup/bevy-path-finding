@@ -1,45 +1,14 @@
+use super::*;
 use std::path::Path;
 
 use crate::maze::{
     common::{cell::MazeCell, states::MazeState, wall::MazeWall},
-    constants::ui::{SAVE_SLOT_BUTTON_COLOR, SAVE_SLOT_BUTTON_HEIGHT, SAVE_SLOT_BUTTON_WIDTH},
     grid::MazeCellGrid,
     storage::read_maze,
 };
 
-use super::*;
-
 #[derive(Component)]
 pub struct LoadMenu;
-
-#[derive(Component)]
-pub struct LoadSlotButton;
-
-#[derive(Component, Clone, Copy)]
-pub struct LoadSlot {
-    pub slot: usize,
-}
-
-impl LoadSlot {
-    pub fn new(slot: usize) -> LoadSlot {
-        LoadSlot { slot }
-    }
-}
-
-fn spawn_load_slot_button<'a>(
-    builder: &'a mut ChildBuilder,
-    load_slot: LoadSlot,
-) -> EntityCommands<'a> {
-    spawn_button(
-        builder,
-        LoadSlotButton,
-        load_slot,
-        SAVE_SLOT_BUTTON_WIDTH,
-        SAVE_SLOT_BUTTON_HEIGHT,
-        SAVE_SLOT_BUTTON_COLOR,
-        &load_slot.slot.to_string(),
-    )
-}
 
 pub fn build_menu(mut commands: Commands) {
     spawn_ui_container(&mut commands, LoadMenu)
@@ -51,31 +20,41 @@ pub fn build_menu(mut commands: Commands) {
         })
         .with_children(|builder| {
             spawn_slot_container(builder).with_children(|builder| {
-                for order in 0..11 {
+                for order in 1..11 {
                     let save_path = format!("saves/save_{}.mz", order);
-                    if !Path::new(&save_path).exists() {
-                        continue;
-                    }
+                    let save_slot = if Path::new(&save_path).exists() {
+                        StorageSlot::new(order, false)
+                    } else {
+                        StorageSlot::new(order, true)
+                    };
 
-                    spawn_load_slot_button(builder, LoadSlot::new(order));
+                    spawn_storage_slot_button(builder, save_slot, LoadSlotButton);
                 }
             });
         });
 }
 
+#[allow(clippy::type_complexity)]
 pub fn load_maze(
     mut commands: Commands,
     maze_cell_children_query: Query<&Children, With<MazeCell>>,
     maze_wall_query: Query<&MazeWall>,
-    load_slot_interraction: Query<(&Interaction, &LoadSlot), Changed<Interaction>>,
+    storage_slot_interraction: Query<
+        (&Interaction, &StorageSlot),
+        (Changed<Interaction>, With<LoadSlotButton>),
+    >,
     cell_grid: Res<MazeCellGrid>,
 ) {
-    let pressed_slot = load_slot_interraction
+    let pressed_slot = storage_slot_interraction
         .iter()
         .find(|(&interraction, _)| interraction == Interaction::Pressed);
 
-    if let Some((_, load_slot)) = pressed_slot {
-        let maze_storage = read_maze(load_slot.slot);
+    if let Some((_, storage_slot)) = pressed_slot {
+        if storage_slot.empty {
+            return;
+        }
+
+        let maze_storage = read_maze(storage_slot.slot);
 
         for (position, wall_directions) in maze_storage {
             let (row, col) = position;
@@ -94,7 +73,7 @@ pub fn load_maze(
     }
 }
 
-pub struct LoadMenuPlugin;
+pub(crate) struct LoadMenuPlugin;
 impl Plugin for LoadMenuPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(MazeState::MazeLoad), build_menu)

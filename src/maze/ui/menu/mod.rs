@@ -1,13 +1,11 @@
 pub mod generate;
-pub mod load;
 pub mod main;
-pub mod save;
+pub mod storage;
 
 use bevy::prelude::*;
 use generate::GenerateMenuPlugin;
-use load::LoadMenuPlugin;
 use main::MainMenuPlugin;
-use save::SaveMenuPlugin;
+use storage::StorageMenuPlugin;
 
 use crate::maze::constants::{
     ui::{
@@ -99,7 +97,6 @@ impl Plugin for MenuPlugin {
         app.add_systems(Update, change_action_button_color)
             .add_plugins(MainMenuPlugin)
             .add_plugins(GenerateMenuPlugin)
-            .add_plugins(SaveMenuPlugin)
-            .add_plugins(LoadMenuPlugin);
+            .add_plugins(StorageMenuPlugin);
     }
 }

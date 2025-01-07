@@ -1,71 +1,35 @@
+use super::*;
+use bevy::prelude::*;
 use std::path::Path;
 
-use bevy::prelude::*;
-
-use super::{despawn_menu, main::spawn_button, spawn_slot_container, spawn_ui_container};
+use super::{despawn_menu, spawn_slot_container, spawn_ui_container};
 use crate::maze::{
     common::states::{MazeState, MenuState},
-    constants::ui::{
-        NOT_EMPTY_SAVE_SLOT_BUTTON_COLOR, SAVE_SLOT_BUTTON_COLOR, SAVE_SLOT_BUTTON_HEIGHT,
-        SAVE_SLOT_BUTTON_WIDTH,
-    },
     storage::SaveMazeEvent,
 };
 
 #[derive(Component)]
 pub struct SaveMenu;
 
-#[derive(Component)]
-pub struct SaveSlotButton;
-
-#[derive(Component, Clone, Copy)]
-pub struct SaveSlot {
-    pub slot: usize,
-    pub empty: bool,
-}
-
-impl SaveSlot {
-    pub fn new(slot: usize, empty: bool) -> SaveSlot {
-        SaveSlot { slot, empty }
-    }
-}
-
+#[allow(clippy::type_complexity)]
 pub fn save_maze(
-    maze_slot_interraction_query: Query<(&Interaction, &SaveSlot), Changed<Interaction>>,
+    storage_slot_interraction_query: Query<
+        (&Interaction, &StorageSlot),
+        (Changed<Interaction>, With<SaveSlotButton>),
+    >,
     mut maze_next_state: ResMut<NextState<MazeState>>,
     mut save_maze_writer: EventWriter<SaveMazeEvent>,
 ) {
-    let pressed_slot = maze_slot_interraction_query
+    let pressed_slot = storage_slot_interraction_query
         .iter()
         .find(|(&interraction, _)| interraction == Interaction::Pressed);
 
-    if let Some((_, save_slot)) = pressed_slot {
+    if let Some((_, storage_slot)) = pressed_slot {
         save_maze_writer.send(SaveMazeEvent {
-            slot: save_slot.slot,
+            slot: storage_slot.slot,
         });
         maze_next_state.set(MazeState::MainMenu(MenuState::WithMaze));
     }
-}
-
-fn spawn_save_slot_button<'a>(
-    builder: &'a mut ChildBuilder,
-    save_slot: SaveSlot,
-) -> EntityCommands<'a> {
-    let color = if save_slot.empty {
-        SAVE_SLOT_BUTTON_COLOR
-    } else {
-        NOT_EMPTY_SAVE_SLOT_BUTTON_COLOR
-    };
-
-    spawn_button(
-        builder,
-        SaveSlotButton,
-        save_slot,
-        SAVE_SLOT_BUTTON_WIDTH,
-        SAVE_SLOT_BUTTON_HEIGHT,
-        color,
-        &save_slot.slot.to_string(),
-    )
 }
 
 pub fn build_menu(mut commands: Commands) {
@@ -81,18 +45,18 @@ pub fn build_menu(mut commands: Commands) {
                 for order in 1..11 {
                     let save_path = format!("saves/save_{}.mz", order);
                     let save_slot = if Path::new(&save_path).exists() {
-                        SaveSlot::new(order, false)
+                        StorageSlot::new(order, false)
                     } else {
-                        SaveSlot::new(order, true)
+                        StorageSlot::new(order, true)
                     };
 
-                    spawn_save_slot_button(builder, save_slot);
+                    spawn_storage_slot_button(builder, save_slot, SaveSlotButton);
                 }
             });
         });
 }
 
-pub struct SaveMenuPlugin;
+pub(crate) struct SaveMenuPlugin;
 
 impl Plugin for SaveMenuPlugin {
     fn build(&self, app: &mut App) {
