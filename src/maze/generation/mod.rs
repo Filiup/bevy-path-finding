@@ -22,6 +22,10 @@ enum GenerationState {
     Finished,
 }
 
+fn init_generation_state(mut generation_state: ResMut<NextState<GenerationState>>) {
+    generation_state.set(GenerationState::Running);
+}
+
 fn change_generation_state(
     cell_stack: Res<EntityStack>,
     mut generation_state: ResMut<NextState<GenerationState>>,
@@ -45,6 +49,7 @@ impl Plugin for MazeGenerationPlugin {
             .add_event::<ResetStackColor>()
             .add_systems(Startup, init_mazecell_stack)
             .add_systems(OnEnter(GenerationState::Finished), change_maze_state)
+            .add_systems(OnEnter(MazeState::MazeGeneration), init_generation_state)
             .add_systems(Update, reset_mazecell_stack)
             .add_systems(
                 Update,
