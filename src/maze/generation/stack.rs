@@ -4,6 +4,9 @@ use bevy::prelude::*;
 #[derive(Resource, Default)]
 pub struct EntityStack(Vec<Entity>);
 
+#[derive(Event)]
+pub struct ResetMazeCellStackEvent;
+
 impl EntityStack {
     pub fn push(&mut self, value: Entity) {
         self.0.push(value);
@@ -18,10 +21,22 @@ impl EntityStack {
     }
 }
 
-pub(crate) fn stack_add_first_mazecell(
+pub(crate) fn init_mazecell_stack(
     mut entity_stack: ResMut<EntityStack>,
     entity_query: Query<Entity, With<MazeCell>>,
 ) {
     let entity = entity_query.into_iter().next().unwrap();
     entity_stack.push(entity);
+}
+
+pub fn reset_mazecell_stack(
+    reset_stack_event_reader: EventReader<ResetMazeCellStackEvent>,
+    entity_stack: ResMut<EntityStack>,
+    entity_query: Query<Entity, With<MazeCell>>,
+) {
+    if reset_stack_event_reader.is_empty() {
+        return;
+    }
+
+    init_mazecell_stack(entity_stack, entity_query);
 }

@@ -1,4 +1,4 @@
-use super::MazeCellGrid;
+use super::{MazeCellGrid, ResetGridEvent};
 use crate::maze::{
     common::{
         cell::MazeCell,
@@ -11,12 +11,26 @@ use crate::maze::{
 };
 use bevy::prelude::*;
 
-pub fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {
+pub fn reset_grid(
+    spawn_grid_event_reader: EventReader<ResetGridEvent>,
+    commands: Commands,
+    maze_grid: ResMut<MazeCellGrid>,
+) {
+    if spawn_grid_event_reader.is_empty() {
+        return;
+    }
+
+    spawn_grid(commands, maze_grid);
+}
+
+pub(crate) fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {
     let half_block_size = BLOCK_SIZE / 2.0;
     let half_wall_height = WALL_HEIGHT / 2.0;
 
     let rows = (GRID_WINDOW_HEIGHT / BLOCK_SIZE) as usize;
     let cols = (GRID_WINDOW_WIDTH / BLOCK_SIZE) as usize;
+
+    maze_grid.clear();
 
     for row in 0..rows {
         for col in 0..cols {
