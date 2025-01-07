@@ -12,6 +12,10 @@ impl EntityStack {
         self.0.push(value);
     }
 
+    fn clear(&mut self) {
+        self.0.clear();
+    }
+
     pub fn pop(&mut self) -> Option<Entity> {
         self.0.pop()
     }
@@ -31,12 +35,12 @@ pub(crate) fn init_mazecell_stack(
 
 pub fn reset_mazecell_stack(
     reset_stack_event_reader: EventReader<ResetMazeCellStackEvent>,
-    entity_stack: ResMut<EntityStack>,
+    mut entity_stack: ResMut<EntityStack>,
     entity_query: Query<Entity, With<MazeCell>>,
 ) {
     if reset_stack_event_reader.is_empty() {
         return;
     }
-
+    entity_stack.clear();
     init_mazecell_stack(entity_stack, entity_query);
 }

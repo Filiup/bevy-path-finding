@@ -14,12 +14,13 @@ use bevy::prelude::*;
 pub fn reset_grid(
     spawn_grid_event_reader: EventReader<ResetGridEvent>,
     commands: Commands,
-    maze_grid: ResMut<MazeCellGrid>,
+    mut maze_grid: ResMut<MazeCellGrid>,
 ) {
     if spawn_grid_event_reader.is_empty() {
         return;
     }
 
+    maze_grid.clear();
     spawn_grid(commands, maze_grid);
 }
 
@@ -29,8 +30,6 @@ pub(crate) fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellG
 
     let rows = (GRID_WINDOW_HEIGHT / BLOCK_SIZE) as usize;
     let cols = (GRID_WINDOW_WIDTH / BLOCK_SIZE) as usize;
-
-    maze_grid.clear();
 
     for row in 0..rows {
         for col in 0..cols {
