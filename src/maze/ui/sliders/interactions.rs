@@ -89,7 +89,6 @@ pub fn move_sliders(
             if let Some(cursor_position) = primary_window.cursor_position() {
                 let new_left = (cursor_position.x - start_pressed_x)
                     .clamp(0.0, SLIDER_WIDTH - SLIDER_HANDLE_WIDTH);
-
                 slider_handle_node.left = Val::Px(new_left);
             }
         }
