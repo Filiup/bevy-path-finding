@@ -7,21 +7,29 @@ use crate::maze::{
     constants::{
         grid::{BLOCK_SIZE, CELL_COLOR, WALL_COLOR, WALL_HEIGHT},
         window::{GRID_WINDOW_HEIGHT, GRID_WINDOW_WIDTH},
-    },
+    }, generation::ResetMazeCellStackEvent,
 };
 use bevy::prelude::*;
 
 pub fn reset_grid(
     spawn_grid_event_reader: EventReader<ResetGridEvent>,
-    commands: Commands,
+    mut reset_stack_event_writer: EventWriter<ResetMazeCellStackEvent>,
+    mut commands: Commands,
     mut maze_grid: ResMut<MazeCellGrid>,
+    maze_cell_entities: Query<Entity, With<MazeCell>>,
 ) {
     if spawn_grid_event_reader.is_empty() {
         return;
     }
 
+    for entity in maze_cell_entities.iter() {
+        commands.entity(entity).try_despawn_recursive();
+    }
+
     maze_grid.clear();
     spawn_grid(commands, maze_grid);
+
+    reset_stack_event_writer.send(ResetMazeCellStackEvent);
 }
 
 pub(crate) fn spawn_grid(mut commands: Commands, mut maze_grid: ResMut<MazeCellGrid>) {

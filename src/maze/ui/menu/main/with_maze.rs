@@ -1,9 +1,5 @@
 use crate::maze::{
-    common::{
-        cell::MazeCell,
-        states::{MazeState, MenuState},
-    },
-    generation::ResetMazeCellStackEvent,
+    common::states::{MazeState, MenuState},
     grid::ResetGridEvent,
 };
 
@@ -21,13 +17,8 @@ pub fn build_main_menu(mut commands: Commands) {
 }
 
 fn reset_maze(
-    mut commands: Commands,
     mut maze_state: ResMut<NextState<MazeState>>,
-
     mut reset_grid_event_writer: EventWriter<ResetGridEvent>,
-    mut reset_stack_event_writer: EventWriter<ResetMazeCellStackEvent>,
-
-    maze_cell_entities: Query<Entity, With<MazeCell>>,
     reset_button_interraction_query: Query<&Interaction, With<ResetMazeButton>>,
 ) {
     let button_clicked = reset_button_interraction_query
@@ -38,13 +29,7 @@ fn reset_maze(
         return;
     }
 
-    for entity in maze_cell_entities.iter() {
-        commands.entity(entity).try_despawn_recursive();
-    }
-
     reset_grid_event_writer.send(ResetGridEvent);
-    reset_stack_event_writer.send(ResetMazeCellStackEvent);
-
     maze_state.set(MazeState::MainMenu(MenuState::WithoutMaze));
 }
 
