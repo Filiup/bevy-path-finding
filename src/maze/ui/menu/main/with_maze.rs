@@ -12,6 +12,7 @@ pub struct WithMazeMenu;
 pub fn build_main_menu(mut commands: Commands) {
     spawn_ui_container(&mut commands, WithMazeMenu).with_children(|builder| {
         spawn_action_button(builder, SaveMazeButton, "Save maze");
+        spawn_action_button(builder, SolveMazeButton, "Solve maze");
         spawn_action_button(builder, ResetMazeButton, "Reset maze");
     });
 }
@@ -47,7 +48,10 @@ impl Plugin for WithMazeMenuPlugin {
         )
         .add_systems(
             Update,
-            button_state_system::<SaveMazeButton, _>(MazeState::MazeSave, Interaction::Pressed),
+            (
+                button_state_system::<SaveMazeButton, _>(MazeState::MazeSave, Interaction::Pressed),
+                button_state_system::<SolveMazeButton, _>(MazeState::MazeSolving, Interaction::Pressed),
+            ),
         )
         .add_systems(Update, reset_maze);
     }

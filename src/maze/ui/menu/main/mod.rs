@@ -19,6 +19,10 @@ pub(crate) struct SaveMazeButton;
 #[derive(Component)]
 pub(crate) struct ResetMazeButton;
 
+
+#[derive(Component)]
+pub(crate) struct SolveMazeButton;
+
 pub struct MainMenuPlugin;
 
 impl Plugin for MainMenuPlugin {

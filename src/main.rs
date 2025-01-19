@@ -7,6 +7,7 @@ use maze::common::states::MazeState;
 use maze::default::MazeDefaultPlugin;
 use maze::generation::MazeGenerationPlugin;
 use maze::grid::MazeGridPlugin;
+use maze::solving::MazeSolvingPlugin;
 use maze::storage::MazeStoragePlugin;
 use maze::ui::UiPlugin;
 
@@ -18,6 +19,7 @@ fn main() {
         .add_plugins(MazeStoragePlugin)
         .add_plugins(MazeGridPlugin)
         .add_plugins(MazeGenerationPlugin)
+        .add_plugins(MazeSolvingPlugin)
         .add_plugins(UiPlugin)
         .run();
 }
