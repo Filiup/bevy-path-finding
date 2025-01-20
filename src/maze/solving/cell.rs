@@ -74,7 +74,7 @@ pub fn iterate_cells(
         let (current_cell, current_children) = maze_cells_query.get(current_entity).unwrap();
         let current_wall_directions = current_children
             .iter()
-            .map(|&we| walls_query.get(we).unwrap())
+            .filter_map(|&we| walls_query.get(we).ok())
             .map(|wc| wc.direction)
             .collect::<HashSet<_>>();
 
@@ -85,7 +85,7 @@ pub fn iterate_cells(
 
                 let neighbor_wall_directions = neighbor_children
                     .iter()
-                    .map(|&we| walls_query.get(we).unwrap())
+                    .filter_map(|&we| walls_query.get(we).ok())
                     .map(|wc| wc.direction)
                     .collect::<HashSet<_>>();
 
