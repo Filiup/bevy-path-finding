@@ -12,10 +12,11 @@ Algoritmuz:
     2. nájdi všetkým sesedov, cez ktorých je možný prechod a neboli už navštívení ( o jedno vpred )
     3. pridaj všetkých nájdených susedov do queue */
 
-use super::{queue::CellQueue, visited_set::VisitedCellSet};
+use super::{color::ChangeQueueColor, queue::CellQueue, visited_set::VisitedCellSet};
 use crate::maze::{
     common::{
         cell::{find_cell_neighbors, MazeCell},
+        solving::MazeSolvingTimer,
         wall::{MazeWall, WallDirection},
     },
     grid::MazeCellGrid,
@@ -60,14 +61,24 @@ fn is_accessible_neigbor(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn iterate_cells(
+    cell_grid: Res<MazeCellGrid>,
     mut cell_queue: ResMut<CellQueue>,
     mut visited_cell_set: ResMut<VisitedCellSet>,
+    mut solving_timer: ResMut<MazeSolvingTimer>,
+    time: Res<Time>,
 
-    cell_grid: Res<MazeCellGrid>,
+    mut change_color_writer: EventWriter<ChangeQueueColor>,
+
     maze_cells_query: Query<(&MazeCell, &Children)>,
     walls_query: Query<&MazeWall>,
 ) {
+    solving_timer.timer.tick(time.delta());
+    if !solving_timer.timer.finished() {
+        return;
+    }
+
     if let Some(current_entity) = cell_queue.dequeue() {
         visited_cell_set.insert(current_entity);
 
@@ -95,7 +106,13 @@ pub fn iterate_cells(
                     &current_wall_directions,
                     neighbor_wall_directions,
                 )
-            });
+            })
+            .collect::<Vec<_>>();
+
+        change_color_writer.send(ChangeQueueColor {
+            cell: current_entity,
+            neighbor_cells: cell_neighbors.clone(),
+        });
 
         for ne in cell_neighbors {
             cell_queue.enqueue(ne);

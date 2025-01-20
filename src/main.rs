@@ -3,6 +3,7 @@ mod maze;
 use bevy::app::App;
 use bevy::prelude::AppExtStates;
 use maze::common::generation::MazeGenerationTimer;
+use maze::common::solving::MazeSolvingTimer;
 use maze::common::states::MazeState;
 use maze::default::MazeDefaultPlugin;
 use maze::generation::MazeGenerationPlugin;
@@ -16,6 +17,7 @@ fn main() {
         .add_plugins(MazeDefaultPlugin)
         .init_state::<MazeState>()
         .init_resource::<MazeGenerationTimer>()
+        .init_resource::<MazeSolvingTimer>()
         .add_plugins(MazeStoragePlugin)
         .add_plugins(MazeGridPlugin)
         .add_plugins(MazeGenerationPlugin)
