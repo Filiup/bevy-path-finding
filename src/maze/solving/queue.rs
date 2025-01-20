@@ -4,23 +4,6 @@ use std::{
     ops::{Deref, DerefMut},
 };
 
-// TODO: Solving alghorithm
-/* Požiadavky:
-1. Inicializacia Cell od ktoreho sa zacina a cell kde sa bude koncit - DONE
-1. Vytvorenie FIFO Queue - DONE
-2. Pridanie miesta začiatku ako prvý element do Queue - Done
-
-
-Algoritmuz:
-
-1. Pokiaľ queue nie je prázdna
-    1. zober z nej jeden cell a označ ho ako "visited"
-    2. nájdi všetkým sesedov, cez ktorých je možný prechod a neboli už navštívení ( o jedno vpred )
-    3. pridaj všetkých nájdených susedov do queue */
-
-
-
-
 // FIFO queue resource for solving using DFS
 #[derive(Resource, Default)]
 pub struct CellQueue(VecDeque<Entity>);

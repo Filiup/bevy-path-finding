@@ -1,5 +1,8 @@
 use crate::maze::{
-    common::{cell::MazeCell, generation::MazeGenerationTimer},
+    common::{
+        cell::{find_cell_neighbors, MazeCell},
+        generation::MazeGenerationTimer,
+    },
     grid::MazeCellGrid,
 };
 
@@ -10,20 +13,6 @@ use super::{
 };
 use bevy::prelude::*;
 use rand::prelude::*;
-
-fn find_neighbors(maze_cell: &MazeCell, cell_grid: &MazeCellGrid) -> impl Iterator<Item = Entity> {
-    let find_neighbor = |row, col| cell_grid.get(row?, col?);
-
-    let top_neighbor = find_neighbor(maze_cell.row.checked_add(1), Some(maze_cell.col));
-    let bottom_neighbor = find_neighbor(maze_cell.row.checked_sub(1), Some(maze_cell.col));
-
-    let left_neighbor = find_neighbor(Some(maze_cell.row), maze_cell.col.checked_sub(1));
-    let right_neighbor = find_neighbor(Some(maze_cell.row), maze_cell.col.checked_add(1));
-
-    [top_neighbor, bottom_neighbor, left_neighbor, right_neighbor]
-        .into_iter()
-        .flatten()
-}
 
 #[allow(clippy::too_many_arguments)]
 pub fn iterate_cells(
@@ -51,7 +40,7 @@ pub fn iterate_cells(
 
         current_cell.visited = true;
 
-        let neighbors = find_neighbors(&current_cell, &cell_grid)
+        let neighbors = find_cell_neighbors(&current_cell, &cell_grid)
             .filter(|&entity| {
                 let neighbor_cell = maze_cells_query.get(entity).unwrap();
                 !neighbor_cell.visited

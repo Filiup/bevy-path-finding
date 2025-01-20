@@ -1,7 +1,9 @@
 use bevy::app::Plugin;
 use bevy::prelude::*;
+use cell::iterate_cells;
 use queue::reset_mazecell_queue;
 use queue::{init_mazecell_queue, CellQueue};
+use visited_set::VisitedCellSet;
 
 use super::common::cell::MazeCell;
 use super::common::states::MazeState;
@@ -9,7 +11,10 @@ use super::constants::grid::*;
 use super::constants::window::*;
 use super::grid::MazeCellGrid;
 
+mod cell;
 mod queue;
+mod visited_set;
+
 pub struct MazeSolvingPlugin;
 
 #[derive(Component)]
@@ -58,6 +63,7 @@ pub fn reset_solving_route(
 impl Plugin for MazeSolvingPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.init_resource::<CellQueue>()
+            .init_resource::<VisitedCellSet>()
             .add_systems(
                 OnEnter(MazeState::MazeSolving),
                 (
@@ -68,6 +74,10 @@ impl Plugin for MazeSolvingPlugin {
             .add_systems(
                 OnExit(MazeState::MazeSolving),
                 (reset_mazecell_queue, reset_solving_route),
+            )
+            .add_systems(
+                Update,
+                iterate_cells.run_if(in_state(MazeState::MazeSolving)),
             );
     }
 }
