@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::maze::{
     common::cell::MazeCell,
-    constants::generation::{CELL_STACK_COLOR, NEIGHBOR_CELL_COLOR},
+    constants::iterration::{CELL_STACK_COLOR, NEIGHBOR_CELL_COLOR},
 };
 
 #[derive(Event)]

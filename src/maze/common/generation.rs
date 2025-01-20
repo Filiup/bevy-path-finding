@@ -5,7 +5,7 @@ use bevy::{
     time::{Timer, TimerMode},
 };
 
-use crate::maze::constants::generation::DEFAULT_MAZE_GENERATION_TIMER_VALUE;
+use crate::maze::constants::iterration::DEFAULT_MAZE_GENERATION_TIMER_VALUE;
 
 #[derive(Resource)]
 pub struct MazeGenerationTimer {

@@ -1,17 +1,3 @@
-// TODO: Solving alghorithm
-/* Požiadavky:
-1. Inicializacia Cell od ktoreho sa zacina a cell kde sa bude koncit - DONE
-1. Vytvorenie FIFO Queue - DONE
-2. Pridanie miesta začiatku ako prvý element do Queue - Done
-
-
-Algoritmuz:
-
-1. Pokiaľ queue nie je prázdna
-    1. zober z nej jeden cell a označ ho ako "visited" -> DONE
-    2. nájdi všetkým sesedov, cez ktorých je možný prechod a neboli už navštívení ( o jedno vpred )
-    3. pridaj všetkých nájdených susedov do queue */
-
 use super::{color::ChangeQueueColor, queue::CellQueue, visited_set::VisitedCellSet};
 use crate::maze::{
     common::{

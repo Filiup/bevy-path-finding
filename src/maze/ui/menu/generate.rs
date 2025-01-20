@@ -4,7 +4,7 @@ use bevy::prelude::*;
 
 use crate::maze::{
     common::{generation::MazeGenerationTimer, states::MazeState},
-    constants::generation::DEFAULT_MAZE_GENERATION_TIMER_VALUE,
+    constants::iterration::DEFAULT_MAZE_GENERATION_TIMER_VALUE,
     ui::sliders::{builders::spawn_slider, SliderDirection, SliderHandle},
 };
 
