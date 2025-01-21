@@ -52,8 +52,10 @@ pub fn hover_cells_system(
         let cursor_position = window.cursor_position();
 
         let mut set_color = |entity, color| {
-            let mut cell_sprite = cell_sprite_query.get_mut(entity).unwrap();
-            cell_sprite.color = color;
+            let cell_sprite = cell_sprite_query.get_mut(entity);
+            if let Ok(mut cell_sprite) = cell_sprite {
+                cell_sprite.color = color;
+            }
         };
 
         match (cursor_position, *last_hovered_cell_entity) {
