@@ -29,6 +29,7 @@ pub fn draw_shortest_path(
         }
 
         if path.len() <= 2 {
+            maze_state.set(MazeState::MainMenu(MenuState::WithSolvedMaze));
             return;
         }
 
