@@ -22,6 +22,7 @@ impl Plugin for MazeDefaultPlugin {
         app.add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 resolution: WindowResolution::new(WINDOW_WIDTH, WINDOW_HEIGHT),
+                title: "Path finding visualization".to_string(),
                 resizable: false,
                 ..default()
             }),
