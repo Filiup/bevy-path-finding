@@ -51,20 +51,16 @@ pub fn init_solving_route(
     end_cell_sprite.color = END_CELL_COLOR;
 }
 
-#[allow(clippy::type_complexity)]
 pub fn reset_solving_route(
     mut commands: Commands,
-    mut start_cell_query: Query<(Entity, &mut Sprite), With<StartCell>>,
-    mut end_cell_entity_query: Query<(Entity, &mut Sprite), (With<EndCell>, Without<StartCell>)>,
+    mut start_cell_query: Query<Entity, With<StartCell>>,
+    mut end_cell_entity_query: Query<Entity, With<EndCell>>,
 ) {
-    let (start_cell_entity, mut start_cell_sprite) = start_cell_query.get_single_mut().unwrap();
-    let (end_cell_entity, mut end_cell_sprite) = end_cell_entity_query.get_single_mut().unwrap();
+    let start_cell_entity = start_cell_query.get_single_mut().unwrap();
+    let end_cell_entity = end_cell_entity_query.get_single_mut().unwrap();
 
     commands.entity(start_cell_entity).remove::<StartCell>();
     commands.entity(end_cell_entity).remove::<EndCell>();
-
-    start_cell_sprite.color = CELL_COLOR;
-    end_cell_sprite.color = CELL_COLOR;
 }
 
 impl Plugin for MazeSolvingPlugin {
