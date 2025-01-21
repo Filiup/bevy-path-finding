@@ -3,10 +3,10 @@ use bevy::prelude::*;
 use cell::iterate_cells;
 use color::{change_queue_color, ChangeQueueColor};
 use path::{draw_shortest_path, DrawShortestPath};
-use predecessors::PredecessorsMap;
+use predecessors::{reset_predecessors_map, PredecessorsMap};
 use queue::reset_mazecell_queue;
 use queue::{init_mazecell_queue, CellQueue};
-use visited_set::VisitedCellSet;
+use visited_set::{reset_visited_cell_set, VisitedCellSet};
 
 use super::common::cell::MazeCell;
 use super::common::states::MazeState;
@@ -51,10 +51,11 @@ pub fn init_solving_route(
     end_cell_sprite.color = END_CELL_COLOR;
 }
 
+#[allow(clippy::type_complexity)]
 pub fn reset_solving_route(
     mut commands: Commands,
     mut start_cell_query: Query<(Entity, &mut Sprite), With<StartCell>>,
-    mut end_cell_entity_query: Query<(Entity, &mut Sprite), With<EndCell>>,
+    mut end_cell_entity_query: Query<(Entity, &mut Sprite), (With<EndCell>, Without<StartCell>)>,
 ) {
     let (start_cell_entity, mut start_cell_sprite) = start_cell_query.get_single_mut().unwrap();
     let (end_cell_entity, mut end_cell_sprite) = end_cell_entity_query.get_single_mut().unwrap();
@@ -82,15 +83,16 @@ impl Plugin for MazeSolvingPlugin {
             )
             .add_systems(
                 OnExit(MazeState::MazeSolving),
-                (reset_mazecell_queue, reset_solving_route),
+                (
+                    reset_mazecell_queue,
+                    reset_solving_route,
+                    reset_predecessors_map,
+                    reset_visited_cell_set,
+                ),
             )
             .add_systems(
                 Update,
-                (
-                    iterate_cells,
-                    change_queue_color,
-                    draw_shortest_path,
-                )
+                (iterate_cells, change_queue_color, draw_shortest_path)
                     .run_if(in_state(MazeState::MazeSolving)),
             );
     }

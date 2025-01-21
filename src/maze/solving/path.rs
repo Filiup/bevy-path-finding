@@ -1,6 +1,9 @@
 use bevy::prelude::*;
 
-use crate::maze::common::cell::MazeCell;
+use crate::maze::common::{
+    cell::MazeCell,
+    states::{MazeState, MenuState},
+};
 
 use super::{predecessors::PredecessorsMap, EndCell};
 
@@ -10,6 +13,7 @@ pub struct DrawShortestPath;
 pub fn draw_shortest_path(
     mut shortest_path_reader: EventReader<DrawShortestPath>,
     predecessors_map: Res<PredecessorsMap>,
+    mut maze_state: ResMut<NextState<MazeState>>,
     end_cell_entity_query: Query<Entity, With<EndCell>>,
     mut maze_cell_sprite_query: Query<&mut Sprite, With<MazeCell>>,
 ) {
@@ -32,5 +36,7 @@ pub fn draw_shortest_path(
             let mut maze_cell_sprite = maze_cell_sprite_query.get_mut(entity).unwrap();
             maze_cell_sprite.color = Color::linear_rgb(0.0, 128.0, 0.0);
         }
+
+        maze_state.set(MazeState::MainMenu(MenuState::WithSolvedMaze));
     }
 }

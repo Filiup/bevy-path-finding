@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use bevy::{prelude::{Entity, Resource}, utils::HashMap};
+use bevy::{prelude::*, utils::HashMap};
 
 #[derive(Resource, Default, Debug)]
 pub struct PredecessorsMap(HashMap<Entity, Entity>);
@@ -16,4 +16,8 @@ impl DerefMut for PredecessorsMap {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
     }
+}
+
+pub fn reset_predecessors_map(mut predecessors_map: ResMut<PredecessorsMap>) {
+    predecessors_map.clear();
 }
