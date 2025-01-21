@@ -1,6 +1,6 @@
 use super::{
-    color::ChangeQueueColor, predecessors::PredecessorsMap, queue::CellQueue,
-    visited_set::VisitedCellSet, EndCell,
+    color::ChangeQueueColor, path::DrawShortestPath, predecessors::PredecessorsMap,
+    queue::CellQueue, visited_set::VisitedCellSet, EndCell,
 };
 use crate::maze::{
     common::{
@@ -60,6 +60,7 @@ pub fn iterate_cells(
     time: Res<Time>,
 
     mut change_color_writer: EventWriter<ChangeQueueColor>,
+    mut draw_shortest_path_writer: EventWriter<DrawShortestPath>,
 
     maze_cells_query: Query<(&MazeCell, &Children)>,
     end_cell_entity_query: Query<Entity, With<EndCell>>,
@@ -77,6 +78,7 @@ pub fn iterate_cells(
 
         if current_entity == end_cell_entity {
             cell_queue.clear();
+            draw_shortest_path_writer.send(DrawShortestPath);
             return;
         }
 
