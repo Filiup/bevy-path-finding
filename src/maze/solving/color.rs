@@ -1,11 +1,9 @@
 use bevy::prelude::*;
 
 use crate::maze::{
-    common::cell::MazeCell,
+    common::cell::{EndCell, MazeCell, StartCell},
     constants::iterration::{CELL_STACK_COLOR, NEIGHBOR_CELL_COLOR},
 };
-
-use super::{EndCell, StartCell};
 
 #[derive(Event)]
 pub struct ChangeQueueColor {

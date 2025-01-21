@@ -1,10 +1,10 @@
 use super::{
     color::ChangeQueueColor, path::DrawShortestPath, predecessors::PredecessorsMap,
-    queue::CellQueue, visited_set::VisitedCellSet, EndCell,
+    queue::CellQueue, visited_set::VisitedCellSet,
 };
 use crate::maze::{
     common::{
-        cell::{find_cell_neighbors, MazeCell},
+        cell::{find_cell_neighbors, EndCell, MazeCell},
         solving::MazeSolvingTimer,
         wall::{MazeWall, WallDirection},
     },
