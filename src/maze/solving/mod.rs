@@ -9,7 +9,7 @@ use queue::{init_mazecell_queue, CellQueue};
 use visited_set::{reset_visited_cell_set, VisitedCellSet};
 
 use super::common::cell::MazeCell;
-use super::common::states::MazeState;
+use super::common::states::{MazeState, SolveState};
 use super::constants::grid::*;
 use super::constants::window::*;
 use super::grid::MazeCellGrid;
@@ -24,10 +24,10 @@ mod visited_set;
 pub struct MazeSolvingPlugin;
 
 #[derive(Component)]
-pub struct StartCell;
+pub(crate) struct StartCell;
 
 #[derive(Component)]
-pub struct EndCell;
+pub(crate) struct EndCell;
 
 pub fn init_solving_route(
     mut commands: Commands,
@@ -71,14 +71,14 @@ impl Plugin for MazeSolvingPlugin {
             .add_event::<ChangeQueueColor>()
             .add_event::<DrawShortestPath>()
             .add_systems(
-                OnEnter(MazeState::MazeSolving),
+                OnEnter(MazeState::MazeSolve(SolveState::Solving)),
                 (
                     init_solving_route,
                     init_mazecell_queue.after(init_solving_route),
                 ),
             )
             .add_systems(
-                OnExit(MazeState::MazeSolving),
+                OnExit(MazeState::MazeSolve(SolveState::Solving)),
                 (
                     reset_mazecell_queue,
                     reset_solving_route,
@@ -89,7 +89,7 @@ impl Plugin for MazeSolvingPlugin {
             .add_systems(
                 Update,
                 (iterate_cells, change_queue_color, draw_shortest_path)
-                    .run_if(in_state(MazeState::MazeSolving)),
+                    .run_if(in_state(MazeState::MazeSolve(SolveState::Solving))),
             );
     }
 }

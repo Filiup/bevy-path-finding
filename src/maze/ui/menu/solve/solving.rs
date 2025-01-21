@@ -1,12 +1,15 @@
+use super::*;
+use bevy::prelude::*;
 use std::time::Duration;
 
 use crate::maze::{
-    common::{solving::MazeSolvingTimer, states::MazeState},
+    common::{
+        solving::MazeSolvingTimer,
+        states::{MazeState, SolveState},
+    },
     constants::iterration::DEFAULT_MAZE_SOLVING_TIMER_VALUE,
     ui::sliders::{builders::spawn_slider, SliderDirection, SliderHandle},
 };
-
-use super::*;
 
 #[derive(Component)]
 pub struct SolvingMenu;
@@ -14,7 +17,7 @@ pub struct SolvingMenu;
 #[derive(Component)]
 pub struct SolvingSpeedSlider;
 
-pub(crate) struct SolveMenuPlugin;
+pub(crate) struct SolvingMenuPlugin;
 
 pub fn change_solving_timer(
     mut solving_timer: ResMut<MazeSolvingTimer>,
@@ -46,13 +49,19 @@ pub fn build_solving_menu(mut commands: Commands) {
         });
 }
 
-impl Plugin for SolveMenuPlugin {
+impl Plugin for SolvingMenuPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(MazeState::MazeSolving), build_solving_menu)
-            .add_systems(OnExit(MazeState::MazeSolving), despawn_menu::<SolvingMenu>)
-            .add_systems(
-                Update,
-                change_solving_timer.run_if(in_state(MazeState::MazeSolving)),
-            );
+        app.add_systems(
+            OnEnter(MazeState::MazeSolve(SolveState::Solving)),
+            build_solving_menu,
+        )
+        .add_systems(
+            OnExit(MazeState::MazeSolve(SolveState::Solving)),
+            despawn_menu::<SolvingMenu>,
+        )
+        .add_systems(
+            Update,
+            change_solving_timer.run_if(in_state(MazeState::MazeSolve(SolveState::Solving))),
+        );
     }
 }

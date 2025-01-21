@@ -7,7 +7,8 @@ use crate::maze::{
     constants::{
         grid::{BLOCK_SIZE, CELL_COLOR, WALL_COLOR, WALL_HEIGHT},
         window::{GRID_WINDOW_HEIGHT, GRID_WINDOW_WIDTH},
-    }, generation::ResetMazeCellStackEvent,
+    },
+    generation::ResetMazeCellStackEvent,
 };
 use bevy::prelude::*;
 

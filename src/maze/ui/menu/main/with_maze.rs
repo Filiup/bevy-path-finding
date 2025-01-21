@@ -1,5 +1,5 @@
 use crate::maze::{
-    common::states::{MazeState, MenuState},
+    common::states::{MazeState, MenuState, SolveState},
     grid::ResetGridEvent,
 };
 
@@ -50,7 +50,10 @@ impl Plugin for WithMazeMenuPlugin {
             Update,
             (
                 button_state_system::<SaveMazeButton, _>(MazeState::MazeSave, Interaction::Pressed),
-                button_state_system::<SolveMazeButton, _>(MazeState::MazeSolving, Interaction::Pressed),
+                button_state_system::<SolveMazeButton, _>(
+                    MazeState::MazeSolve(SolveState::StartSelect),
+                    Interaction::Pressed,
+                ),
             ),
         )
         .add_systems(Update, reset_maze);

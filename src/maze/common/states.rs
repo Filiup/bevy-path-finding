@@ -5,7 +5,7 @@ use bevy::prelude::States;
 pub enum MazeState {
     MainMenu(MenuState),
     MazeGeneration,
-    MazeSolving,
+    MazeSolve(SolveState),
     MazeSave,
     MazeLoad,
 }
@@ -17,6 +17,14 @@ pub enum MenuState {
     WithoutMaze,
     WithMaze,
     WithSolvedMaze,
+}
+
+#[derive(States, Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
+pub enum SolveState {
+    #[default]
+    StartSelect,
+    EndSelect,
+    Solving,
 }
 
 impl Default for MazeState {

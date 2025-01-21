@@ -8,6 +8,16 @@ pub struct MazeCell {
     pub visited: bool,
 }
 
+#[derive(Component, Clone, Copy)]
+pub struct StartCell;
+
+#[derive(Component, Clone, Copy)]
+pub struct EndCell;
+
+pub trait CellPathCompoment: Component + Copy {}
+impl CellPathCompoment for StartCell {}
+impl CellPathCompoment for EndCell {}
+
 pub fn find_cell_neighbors(
     maze_cell: &MazeCell,
     cell_grid: &MazeCellGrid,
