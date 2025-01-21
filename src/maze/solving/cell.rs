@@ -1,4 +1,7 @@
-use super::{color::ChangeQueueColor, queue::CellQueue, visited_set::VisitedCellSet};
+use super::{
+    color::ChangeQueueColor, predecessors::PredecessorsMap, queue::CellQueue,
+    visited_set::VisitedCellSet, EndCell,
+};
 use crate::maze::{
     common::{
         cell::{find_cell_neighbors, MazeCell},
@@ -53,11 +56,13 @@ pub fn iterate_cells(
     mut cell_queue: ResMut<CellQueue>,
     mut visited_cell_set: ResMut<VisitedCellSet>,
     mut solving_timer: ResMut<MazeSolvingTimer>,
+    mut predecessors_map: ResMut<PredecessorsMap>,
     time: Res<Time>,
 
     mut change_color_writer: EventWriter<ChangeQueueColor>,
 
     maze_cells_query: Query<(&MazeCell, &Children)>,
+    end_cell_entity_query: Query<Entity, With<EndCell>>,
     walls_query: Query<&MazeWall>,
 ) {
     solving_timer.timer.tick(time.delta());
@@ -65,8 +70,15 @@ pub fn iterate_cells(
         return;
     }
 
+    let end_cell_entity = end_cell_entity_query.get_single().unwrap();
+
     if let Some(current_entity) = cell_queue.dequeue() {
         visited_cell_set.insert(current_entity);
+
+        if current_entity == end_cell_entity {
+            cell_queue.clear();
+            return;
+        }
 
         let (current_cell, current_children) = maze_cells_query.get(current_entity).unwrap();
         let current_wall_directions = current_children
@@ -101,6 +113,7 @@ pub fn iterate_cells(
         });
 
         for ne in cell_neighbors {
+            predecessors_map.insert(ne, current_entity);
             cell_queue.enqueue(ne);
         }
     }

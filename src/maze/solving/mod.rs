@@ -2,6 +2,7 @@ use bevy::app::Plugin;
 use bevy::prelude::*;
 use cell::iterate_cells;
 use color::{change_queue_color, ChangeQueueColor};
+use predecessors::PredecessorsMap;
 use queue::reset_mazecell_queue;
 use queue::{init_mazecell_queue, CellQueue};
 use visited_set::VisitedCellSet;
@@ -14,6 +15,7 @@ use super::grid::MazeCellGrid;
 
 mod cell;
 mod color;
+mod predecessors;
 mod queue;
 mod visited_set;
 
@@ -66,6 +68,7 @@ impl Plugin for MazeSolvingPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.init_resource::<CellQueue>()
             .init_resource::<VisitedCellSet>()
+            .init_resource::<PredecessorsMap>()
             .add_event::<ChangeQueueColor>()
             .add_systems(
                 OnEnter(MazeState::MazeSolving),
