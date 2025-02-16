@@ -52,8 +52,9 @@ Additionally, Bevy’s **parallel execution model** and Rust’s **performance b
 ### Running project from pre-compiled binary
 
 1. Navigate to the [Releases](https://github.com/Filiup/bevy-path-finding/releases) page.
-2. Download the appropriate binary for your operating system.
-3. Run the downloaded binary by double-clicking it or executing it from the terminal.
+2. Download the ZIP archive corresponding to your operating system.
+3. Extract the contents to your desired location.
+4. Launch the application by double-clicking the executable or running it via the terminal.
 
 
 
