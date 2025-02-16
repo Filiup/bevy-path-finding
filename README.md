@@ -49,18 +49,24 @@ Additionally, Bevy’s **parallel execution model** and Rust’s **performance b
 
 # Project usage
 
+### Running project from pre-compiled binary
+
+1. Navigate to the [Releases](https://github.com/Filiup/bevy-path-finding/releases) page.
+2. Download the appropriate binary for your operating system.
+3. Run the downloaded binary by double-clicking it or executing it from the terminal.
+
+
+
+### Running project from source
+
 ### Prerequisites
 
 Before running the project, ensure you have the following installed:
 
 - [Rust toolchain](https://rustup.rs/)
 
-### Running project
-
 1. Clone the repository to your preferred location.
 2. Open a terminal, navigate to the project directory, and execute the following command: `cargo run`
-
-
 
 # Future plans
 
